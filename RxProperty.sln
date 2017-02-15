@@ -41,7 +41,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildTools", "BuildTools", 
 		BuildTools\NuGet.exe = BuildTools\NuGet.exe
 		BuildTools\pack.bat = BuildTools\pack.bat
 		BuildTools\push.bat = BuildTools\push.bat
-		BuildTools\ReactiveProperty.nuspec = BuildTools\ReactiveProperty.nuspec
+		BuildTools\RxProperty.nuspec = BuildTools\RxProperty.nuspec
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveProperty.Tests", "Test\ReactiveProperty.Tests\ReactiveProperty.Tests.csproj", "{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}"
@@ -75,6 +75,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{97EC2E
 		Images\interval.png = Images\interval.png
 		Images\reactivecommand1.png = Images\reactivecommand1.png
 		Images\reactivecommand2.png = Images\reactivecommand2.png
+		Images\ReactivePropertyIcon_100x100.png = Images\ReactivePropertyIcon_100x100.png
 		Images\rpsummary.png = Images\rpsummary.png
 		Images\synchronize.png = Images\synchronize.png
 		Images\todomvvm.png = Images\todomvvm.png

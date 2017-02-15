@@ -7,11 +7,11 @@ nuget:
 before_build:
 - cmd: nuget restore
 after_build:
-- cmd: nuget pack BuildTools\ReactiveProperty.nuspec
+- cmd: nuget pack BuildTools\RxProperty.nuspec
 build:
   verbosity: minimal
 artifacts:
-- path: '**\ReactivePropertyOnly.*.nupkg'
+- path: '**\RxProperty.*.nupkg'
 deploy:
 - provider: NuGet
   api_key:

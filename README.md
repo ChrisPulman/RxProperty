@@ -1,9 +1,14 @@
 [Japanese](README-ja.md)
 
+## Why RxProperty
+
+RxProperty package provides an implimentation of the ReactiveProperty package excluding the ReactiveCommand.
+
 ReactiveProperty
 ================
 
 ![ReactiveProperty overview](Images/rpsummary.png)
+
 
 ReactiveProperty provides MVVM and asynchronous support features under Reactive Extensions.
 Target framework is .NET 4.0 and .NET 4.5, .NET 4.6, Windows Phone 8.0/8.1, Windows store app 8.1, UWP, Xamarin.iOS, Xamarin.Android.
@@ -35,7 +40,7 @@ Please download and unblock.
 Install from NuGet.
 
 ```
-> Install-Package ReactiveProperty
+> Install-Package RxProperty
 ```
 
 ## ReactiveProperty class.
@@ -549,132 +554,6 @@ public class PersonViewModel
 
     }
 
-}
-```
-
-# ReactiveCommand
-
-ReactiveProperty provide ReactiveCommand. That is implementation of ICommand interface.
-ReactiveCommand can create from IObservable&lt;bool&gt;.
-ToReactiveCommand extension method can call IObservable&lt;bool&gt;.
-it mean can execute ReactiveCommand when push true value from IObservable&lt;bool&gt;.
-
-Process to subscribe method when executed command.
-
-For example, if all ReactiveProperty doesn't have validation error then it can execute command.
-Follows.
-
-```cs
-
-public class PersonViewModel
-{
-    [Required(ErrorMessage = "Error!!")]
-    public ReactiveProperty<string> Name { get; }
-
-    [Required(ErrorMessage = "Error!!")]
-    [RegularExpression("[0-9]+", ErrorMessage = "Error!!")]
-    public ReactiveProperty<string> Age { get; }
-
-    public ReactiveCommand CommitCommand { get; }
-
-    public PersonViewModel()
-    {
-        this.Name = new ReactiveProperty<string>()
-            .SetValidateAttribute(() => this.Name);
-        this.Age = new ReactiveProperty<string>()
-            .SetValidateAttribute(() => this.Age);
-
-        this.CommitCommand = new[]
-            {
-                this.Name.ObserveHasErrors,
-                this.Age.ObserveHasErrors
-            }
-            .CombineLatest(x => x.All(y => !y))
-            .ToReactiveCommand();
-        this.CommitCommand.Subscribe(async _ => await new MessageDialog("OK").ShowAsync());
-
-    }
-
-}
-```
-
-Bind to View.
-
-```xml
-<Page x:Class="App1.MainPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:App1"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      mc:Ignorable="d">
-
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBox Text="{x:Bind ViewModel.Name.Value, Mode=TwoWay}" />
-        <TextBox Text="{x:Bind ViewModel.Age.Value, Mode=TwoWay}" />
-        <Button Content="Commit"
-                Command="{x:Bind ViewModel.CommitCommand}" />
-    </StackPanel>
-</Page>
-```
-
-Can't push button when validation error.
-
-![ReactiveCommand1](Images/reactivecommand1.png)
-
-Can push button when no validation error.
-
-![ReactiveCommand2](Images/reactivecommand2.png)
-
-ReactiveCommand have ReactiveCommand&lt;T&gt; version. It can use command parameter.
-
-## AsyncReactiveCommand
-
-Async version ReactiveCommand. Create from IObservable&lt;bool&gt;, IReactiveProperty&lt;bool&gt; and default constructor.
-
-Subscribe method can accept Func&lt;T, Task&gt;.
-While executing task return false at CanExecute method.
-
-```cs
-class TestViewModel
-{
-    public AsyncReactiveCommand TestCommand { get; }
-
-    public TestViewModel()
-    {
-        var reactiveCommand = new AsyncReactiveCommand();
-
-        reactiveCommand.Subscribe(async _ =>
-        {
-            await Task.Delay(TimeSpan.FromSeconds(3)); // heavy work...
-        });
-    }
-}
-
-class TestViewModel2
-{
-    public IReadOnlyReactiveProperty<bool> IsBusy { get; }
-    public AsyncReactiveCommand TestCommand1 { get; }
-    public AsyncReactiveCommand TestCommand2 { get; }
-
-    public TestViewModel2()
-    {
-        var isBusy = new ReactiveProperty<bool>(false);
-        IsBusy = isBusy;
-
-        // shared busy source.
-        TestCommand1 = isBusy.ToAsyncReactiveCommand();
-        TestCommand1.Subscribe(async _ =>
-        {
-            await Task.Delay(TimeSpan.FromSeconds(3)); // heavy work1...
-        });
-
-        TestCommand2 = isBusy.ToAsyncReactiveCommand();
-        TestCommand2.Subscribe(async _ =>
-        {
-            await Task.Delay(TimeSpan.FromSeconds(3)); // heavy work2...
-        });
-    }
 }
 ```
 
