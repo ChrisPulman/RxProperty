@@ -6,6 +6,8 @@ nuget:
   project_feed: true
 before_build:
 - cmd: nuget restore
+after_build:
+- cmd: nuget pack BuildTools\ReactiveProperty.nuspec
 build:
   verbosity: minimal
 artifacts:
