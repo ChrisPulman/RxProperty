@@ -99,10 +99,7 @@ namespace ReactiveProperty.Tests
         }
 
         [TestMethod]
-        public void Constructor()
-        {
-            AssertEx.Throws<ArgumentNullException>(() => new ScheduledNotifier<int>(null));
-        }
+        public void Constructor() => AssertEx.Throws<ArgumentNullException>(() => new ScheduledNotifier<int>(null));
 
         [TestMethod]
         public void Subscribe()

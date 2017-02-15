@@ -6,6 +6,9 @@ using System.Reflection;
 
 namespace Reactive.Bindings
 {
+    /// <summary>
+    /// ReactiveProperty Extensions
+    /// </summary>
     public static class ReactivePropertyExtensions
     {
         /// <summary>
@@ -19,7 +22,7 @@ namespace Reactive.Bindings
         {
             var memberExpression = (MemberExpression)selfSelector.Body;
             var propertyInfo = (PropertyInfo)memberExpression.Member;
-            var attrs = propertyInfo.GetCustomAttributes<ValidationAttribute>().ToArray();
+            ValidationAttribute[] attrs = propertyInfo.GetCustomAttributes<ValidationAttribute>().ToArray();
             var context = new ValidationContext(self)
             {
                 MemberName = nameof(ReactiveProperty<T>.Value)

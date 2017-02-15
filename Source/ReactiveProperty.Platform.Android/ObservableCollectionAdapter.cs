@@ -29,6 +29,10 @@ namespace Reactive.Bindings
             this.List.CollectionChanged += this.CollectionChanged;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -42,6 +46,9 @@ namespace Reactive.Bindings
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ObservableCollectionExtensions
     {
         /// <summary>
@@ -57,6 +64,9 @@ namespace Reactive.Bindings
             new ObservableCollectionAdapter<T>(self, createRowView, setRowData, getId);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ReadOnlyObservableCollectionExtensions
     {
         /// <summary>

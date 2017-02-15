@@ -188,15 +188,13 @@ namespace ReactiveProperty.Tests.Extensions
             private string name;
             public string Name
             {
-                get { return this.name; }
-                set { this.name = value; PropertyChanged(this, new PropertyChangedEventArgs("Name")); }
+                get => this.name; set { this.name = value; PropertyChanged(this, new PropertyChangedEventArgs("Name")); }
             }
 
             private int age;
             public int Age
             {
-                get { return this.age; }
-                set { this.age = value; PropertyChanged(this, new PropertyChangedEventArgs("Age")); }
+                get => this.age; set { this.age = value; PropertyChanged(this, new PropertyChangedEventArgs("Age")); }
             }
 
             public event PropertyChangedEventHandler PropertyChanged = (_, __) => { };
@@ -212,8 +210,7 @@ namespace ReactiveProperty.Tests.Extensions
 
             public Tuple<int, int> Point
             {
-                get { return this.point; }
-                set
+                get => this.point; set
                 {
                     if (this.point == value) { return; }
                     this.point = value;

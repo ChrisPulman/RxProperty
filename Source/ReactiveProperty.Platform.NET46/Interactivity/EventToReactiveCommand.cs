@@ -35,15 +35,20 @@ namespace Reactive.Bindings.Interactivity
 
         private IDisposable disposable;
 
+        /// <summary>
+        /// Gets or sets the command.
+        /// </summary>
+        /// <value>The command.</value>
         public ICommand Command
         {
             get => (ICommand)GetValue(CommandProperty); set => SetValue(CommandProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for Command. This enables animation,
-        // styling, binding, etc...
+        /// <summary>
+        /// The command property
+        /// </summary>
         public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register(nameof(EventToReactiveCommand.Command), typeof(ICommand), typeof(EventToReactiveCommand), new PropertyMetadata(null));
+                    DependencyProperty.Register(nameof(EventToReactiveCommand.Command), typeof(ICommand), typeof(EventToReactiveCommand), new PropertyMetadata(null));
 
         /// <summary>
         /// Ignore EventArgs. If value is false then uses Unit.Default.
@@ -57,14 +62,19 @@ namespace Reactive.Bindings.Interactivity
         /// </summary>
         public List<IEventToReactiveConverter> Converters => this.converters;
 
-        // Using a DependencyProperty as the backing store for Converter. This enables animation,
-        // styling, binding, etc...
+        /// <summary>
+        /// Called when [detaching].
+        /// </summary>
         protected override void OnDetaching()
         {
             base.OnDetaching();
             this.disposable?.Dispose();
         }
 
+        /// <summary>
+        /// Invokes the specified parameter.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
         protected override void Invoke(object parameter)
         {
             if (this.disposable == null)

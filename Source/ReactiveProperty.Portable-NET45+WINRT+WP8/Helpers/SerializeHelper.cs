@@ -8,12 +8,11 @@ using System.Xml;
 
 namespace Reactive.Bindings.Helpers
 {
+    /// <summary>
+    /// ///
+    /// </summary>
     public static class SerializeHelper
     {
-        static IEnumerable<PropertyInfo> GetIValueProperties(object target) =>
-            target.GetType().GetRuntimeProperties()
-                .Where(pi => typeof(IReactiveProperty).GetTypeInfo().IsAssignableFrom(pi.PropertyType.GetTypeInfo()));
-
         /// <summary>
         /// Serialize target contains ReactiveProperty's Value.
         /// </summary>
@@ -40,7 +39,9 @@ namespace Reactive.Bindings.Helpers
 
         /// <summary>
         /// <para>Deserialize target's ReactiveProperty value.</para>
-        /// <para>Deserialize order is at first DataMemberAttribute' Order, second alphabetical order.</para>
+        /// <para>
+        /// Deserialize order is at first DataMemberAttribute' Order, second alphabetical order.
+        /// </para>
         /// </summary>
         /// <param name="target">ReactiveProperty holder(such as ViewModel).</param>
         /// <param name="packedData">Serialized string.</param>
@@ -66,13 +67,19 @@ namespace Reactive.Bindings.Helpers
 
             foreach (var item in query)
             {
-                object value;
-                if (values.TryGetValue(item.pi.Name, out value))
+                if (values.TryGetValue(item.pi.Name, out var value))
                 {
                     var ivalue = (IReactiveProperty)item.pi.GetValue(target, null);
-                    if (ivalue != null) ivalue.Value = value;
+                    if (ivalue != null)
+                    {
+                        ivalue.Value = value;
+                    }
                 }
             }
         }
+
+        private static IEnumerable<PropertyInfo> GetIValueProperties(object target) =>
+                            target.GetType().GetRuntimeProperties()
+                .Where(pi => typeof(IReactiveProperty).GetTypeInfo().IsAssignableFrom(pi.PropertyType.GetTypeInfo()));
     }
 }

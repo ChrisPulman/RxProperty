@@ -276,16 +276,10 @@ namespace ReactiveProperty.Tests.Extensions
         }
 
         [TestMethod]
-        public void ObserveElementPropertyTest()
-        {
-            this.ObserveElementPropertyTestCore(false);
-        }
+        public void ObserveElementPropertyTest() => this.ObserveElementPropertyTestCore(false);
 
         [TestMethod]
-        public void ReadOnlyObservableCollection_ObserveElementPropertyTest()
-        {
-            this.ObserveElementPropertyTestCore(true);
-        }
+        public void ReadOnlyObservableCollection_ObserveElementPropertyTest() => this.ObserveElementPropertyTestCore(true);
 
         private void ObserveElementPropertyTestCore(bool wrapAsReadOnly)
         {
@@ -568,8 +562,7 @@ namespace ReactiveProperty.Tests.Extensions
             #region Properties
             public string Name
             {
-                get { return this.name; }
-                set
+                get => this.name; set
                 {
                     if (this.name != value)
                     {
@@ -582,8 +575,7 @@ namespace ReactiveProperty.Tests.Extensions
  
             public int Age
             {
-                get { return this.age; }
-                set
+                get => this.age; set
                 {
                     if (this.age != value)
                     {
@@ -606,7 +598,9 @@ namespace ReactiveProperty.Tests.Extensions
             {
                 var handler = this.PropertyChanged;
                 if (handler != null)
+                {
                     handler(this, new PropertyChangedEventArgs(propertyName));
+                }
             }
             #endregion
         }

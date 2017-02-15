@@ -8,7 +8,9 @@ using System.Text;
 
 namespace Reactive.Bindings
 {
-    // .NET 4 only
+    /// <summary>
+    /// .NET 4 only
+    /// </summary>
     public static class ReactivePropertyExtensions
     {
         /// <summary>
@@ -22,7 +24,7 @@ namespace Reactive.Bindings
         {
             var memberExpression = (MemberExpression)selfSelector.Body;
             var propertyInfo = (PropertyInfo)memberExpression.Member;
-            var attrs = propertyInfo.GetCustomAttributes(false).OfType<ValidationAttribute>().ToArray();
+            ValidationAttribute[] attrs = propertyInfo.GetCustomAttributes(false).OfType<ValidationAttribute>().ToArray();
             var context = new ValidationContext(self, null, null)
             {
                 MemberName = "Value"

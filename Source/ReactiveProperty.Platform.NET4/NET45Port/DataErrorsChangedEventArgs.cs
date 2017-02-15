@@ -2,26 +2,24 @@
 
 namespace System.ComponentModel
 {
-    // 概要:
-    //     System.ComponentModel.INotifyDataErrorInfo.ErrorsChanged イベントにデータを提供します。
+    /// <summary>
+    /// System.ComponentModel.INotifyDataErrorInfo.ErrorsChanged イベントにデータを提供します。
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
     public class DataErrorsChangedEventArgs : EventArgs
     {
-        // 概要:
-        //     System.ComponentModel.DataErrorsChangedEventArgs クラスの新しいインスタンスを初期化します。
-        //
-        // パラメーター:
-        //   propertyName:
-        //     エラーがあるプロパティの名前です。エラーがオブジェクト レベルの場合、null または System.String.Empty です。
-        public DataErrorsChangedEventArgs(string propertyName)
-        {
-            this.PropertyName = propertyName;
-        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataErrorsChangedEventArgs"/> class.
+        /// </summary>
+        /// <param name="propertyName">Name of the property.</param>
+        public DataErrorsChangedEventArgs(string propertyName) => this.PropertyName = propertyName;
 
-        // 概要:
-        //     エラーのあるプロパティの名前を取得します。
-        //
-        // 戻り値:
-        //     エラーのあるプロパティの名前。 エラーがオブジェクト レベルの場合、null または System.String.Empty となります。
+        /// <summary>
+        /// Gets the name of the property.
+        /// </summary>
+        /// <value>
+        /// The name of the property.
+        /// </value>
         public virtual string PropertyName { get; private set; }
     }
 }

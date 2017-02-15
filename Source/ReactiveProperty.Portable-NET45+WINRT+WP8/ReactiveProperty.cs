@@ -13,9 +13,15 @@ using Reactive.Bindings.Extensions;
 
 namespace Reactive.Bindings
 {
+    /// <summary>
+    /// ///
+    /// </summary>
     [Flags]
     public enum ReactivePropertyMode
     {
+        /// <summary>
+        /// The none
+        /// </summary>
         None = 0x00,
 
         /// <summary>
@@ -39,6 +45,15 @@ namespace Reactive.Bindings
         /// <para>Value is OneWayToSource(ReactiveProperty -&gt; Object) synchronized.</para>
         /// <para>PropertyChanged raise on ReactivePropertyScheduler</para>
         /// </summary>
+        /// <typeparam name="TTarget">The type of the target.</typeparam>
+        /// <typeparam name="TProperty">The type of the property.</typeparam>
+        /// <param name="target">The target.</param>
+        /// <param name="propertySelector">The property selector.</param>
+        /// <param name="mode">The mode.</param>
+        /// <param name="ignoreValidationErrorValue">
+        /// if set to <c>true</c> [ignore validation error value].
+        /// </param>
+        /// <returns></returns>
         public static ReactiveProperty<TProperty> FromObject<TTarget, TProperty>(
             TTarget target,
             Expression<Func<TTarget, TProperty>> propertySelector,
@@ -58,9 +73,9 @@ namespace Reactive.Bindings
             ReactivePropertyMode mode = ReactivePropertyMode.DistinctUntilChanged | ReactivePropertyMode.RaiseLatestValueOnSubscribe,
             bool ignoreValidationErrorValue = false)
         {
-            string propertyName; // no use
-            var getter = AccessorCache<TTarget>.LookupGet(propertySelector, out propertyName);
-            var setter = AccessorCache<TTarget>.LookupSet(propertySelector, out propertyName);
+            // no use
+            Func<TTarget, TProperty> getter = AccessorCache<TTarget>.LookupGet(propertySelector, out var propertyName);
+            Action<TTarget, TProperty> setter = AccessorCache<TTarget>.LookupSet(propertySelector, out propertyName);
 
             var result = new ReactiveProperty<TProperty>(raiseEventScheduler, initialValue: getter(target), mode: mode);
             result
@@ -98,9 +113,9 @@ namespace Reactive.Bindings
             ReactivePropertyMode mode = ReactivePropertyMode.DistinctUntilChanged | ReactivePropertyMode.RaiseLatestValueOnSubscribe,
             bool ignoreValidationErrorValue = false)
         {
-            string propertyName; // no use
-            var getter = AccessorCache<TTarget>.LookupGet(propertySelector, out propertyName);
-            var setter = AccessorCache<TTarget>.LookupSet(propertySelector, out propertyName);
+            // no use
+            Func<TTarget, TProperty> getter = AccessorCache<TTarget>.LookupGet(propertySelector, out var propertyName);
+            Action<TTarget, TProperty> setter = AccessorCache<TTarget>.LookupSet(propertySelector, out propertyName);
 
             var result = new ReactiveProperty<TResult>(raiseEventScheduler, initialValue: convert(getter(target)), mode: mode);
             result
@@ -186,13 +201,16 @@ namespace Reactive.Bindings
             IScheduler raiseEventScheduler,
             T initialValue = default(T),
             ReactivePropertyMode mode = ReactivePropertyMode.DistinctUntilChanged | ReactivePropertyMode.RaiseLatestValueOnSubscribe)
-            : this(raiseEventScheduler, initialValue, mode)
-        {
-            this.SourceDisposable = source.Subscribe(x => this.Value = x);
-        }
+            : this(raiseEventScheduler, initialValue, mode) => this.SourceDisposable = source.Subscribe(x => this.Value = x);
 
+        /// <summary>
+        /// Occurs when the validation errors have changed for a property or for the entire entity.
+        /// </summary>
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
@@ -284,7 +302,10 @@ namespace Reactive.Bindings
         /// </summary>
         public void Dispose()
         {
-            if (this.IsDisposed) return;
+            if (this.IsDisposed)
+            {
+                return;
+            }
 
             this.IsDisposed = true;
             this.Source.OnCompleted();
@@ -329,8 +350,15 @@ namespace Reactive.Bindings
                 = Observable.CombineLatest(validators)
                 .Select(xs =>
                 {
-                    if (xs.Count == 0) return null;
-                    if (xs.All(x => x == null)) return null;
+                    if (xs.Count == 0)
+                    {
+                        return null;
+                    }
+
+                    if (xs.All(x => x == null))
+                    {
+                        return null;
+                    }
 
                     var strings = xs
                                 .OfType<string>()
@@ -346,7 +374,10 @@ namespace Reactive.Bindings
                     this.CurrentErrors = x;
                     var handler = this.ErrorsChanged;
                     if (handler != null)
+                    {
                         this.RaiseEventScheduler.Schedule(() => handler(this, SingletonDataErrorsChangedEventArgs.Value));
+                    }
+
                     this.ErrorsTrigger.Value.OnNext(x);
                 });
             return this;
@@ -408,10 +439,14 @@ namespace Reactive.Bindings
             }
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>A <see cref="System.String"/> that represents this instance.</returns>
         public override string ToString() =>
-            (this.LatestValue == null)
-                ? "null"
-                : "{" + this.LatestValue.GetType().Name + ":" + this.LatestValue.ToString() + "}";
+                    (this.LatestValue == null)
+                        ? "null"
+                        : "{" + this.LatestValue.GetType().Name + ":" + this.LatestValue.ToString() + "}";
 
         private void SetValue(T value)
         {
@@ -422,11 +457,17 @@ namespace Reactive.Bindings
         }
     }
 
+    /// <summary>
+    /// ///
+    /// </summary>
     internal class SingletonDataErrorsChangedEventArgs
     {
         public static readonly DataErrorsChangedEventArgs Value = new DataErrorsChangedEventArgs(nameof(ReactiveProperty<object>.Value));
     }
 
+    /// <summary>
+    /// ///
+    /// </summary>
     internal class SingletonPropertyChangedEventArgs
     {
         public static readonly PropertyChangedEventArgs Value = new PropertyChangedEventArgs(nameof(ReactiveProperty<object>.Value));

@@ -9,7 +9,7 @@ namespace Reactive.Bindings
     /// </summary>
     public static class ReactivePropertyScheduler
     {
-        static IScheduler defaultScheduler;
+        private static IScheduler defaultScheduler;
 
         /// <summary>
         /// Get ReactiveProperty default scheduler.
@@ -40,9 +40,6 @@ namespace Reactive.Bindings
         /// set default scheduler.
         /// </summary>
         /// <param name="defaultScheduler"></param>
-        public static void SetDefault(IScheduler defaultScheduler)
-        {
-            ReactivePropertyScheduler.defaultScheduler = defaultScheduler;
-        }
+        public static void SetDefault(IScheduler defaultScheduler) => ReactivePropertyScheduler.defaultScheduler = defaultScheduler;
     }
 }

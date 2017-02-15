@@ -10,28 +10,25 @@ namespace Reactive.Bindings.Notifiers
     /// </summary>
     public class BusyNotifier : INotifyPropertyChanged, IObservable<bool>
     {
-
         private static readonly PropertyChangedEventArgs IsBusyPropertyChangedEventArgs = new PropertyChangedEventArgs(nameof(IsBusy));
+
+        private bool isBusy;
 
         /// <summary>
         /// property changed event handler
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private int ProcessCounter { get; set; }
-
-        private Subject<bool> IsBusySubject { get; } = new Subject<bool>();
-
-        private object LockObject { get; } = new object();
-
-        private bool isBusy;
-
         /// <summary>
         /// Is process running.
         /// </summary>
         public bool IsBusy
         {
-            get { return this.isBusy; }
+            get
+            {
+                return this.isBusy;
+            }
+
             set
             {
                 if (this.isBusy == value) { return; }
@@ -40,6 +37,12 @@ namespace Reactive.Bindings.Notifiers
                 this.IsBusySubject.OnNext(this.isBusy);
             }
         }
+
+        private Subject<bool> IsBusySubject { get; } = new Subject<bool>();
+
+        private object LockObject { get; } = new object();
+
+        private int ProcessCounter { get; set; }
 
         /// <summary>
         /// Process start.

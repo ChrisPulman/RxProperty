@@ -50,10 +50,7 @@ namespace ReactiveProperty.Tests.Serialization
     [DataContract]
     public class Parent
     {
-        public Parent()
-        {
-            this.Child = new ReactiveProperty<Child>();
-        }
+        public Parent() => this.Child = new ReactiveProperty<Child>();
 
         public ReactiveProperty<Child> Child { get; private set; }
     }
@@ -61,10 +58,7 @@ namespace ReactiveProperty.Tests.Serialization
     [DataContract]
     public class Child
     {
-        public Child()
-        {
-            this.Name = new ReactiveProperty<string>();
-        }
+        public Child() => this.Name = new ReactiveProperty<string>();
 
         public ReactiveProperty<string> Name { get; private set; }
     }
@@ -91,14 +85,8 @@ namespace ReactiveProperty.Tests.Serialization
         // use serialize only
         public string PackValue
         {
-            get
-            {
-                return SerializeHelper.PackReactivePropertyValue(this);
-            }
-            set
-            {
-                SerializeHelper.UnpackReactivePropertyValue(this, value);
-            }
+            get => SerializeHelper.PackReactivePropertyValue(this);
+            set => SerializeHelper.UnpackReactivePropertyValue(this, value);
         }
     }
 }

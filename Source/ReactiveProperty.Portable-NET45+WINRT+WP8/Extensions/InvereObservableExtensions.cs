@@ -14,9 +14,6 @@ namespace Reactive.Bindings.Extensions
         /// </summary>
         /// <param name="self">IObservable of bool</param>
         /// <returns>Inverse IObservable of bool</returns>
-        public static IObservable<bool> Inverse(this IObservable<bool> self)
-        {
-            return self.Select(x => !x);
-        }
+        public static IObservable<bool> Inverse(this IObservable<bool> self) => self.Select(x => !x);
     }
 }

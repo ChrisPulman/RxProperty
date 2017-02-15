@@ -261,16 +261,14 @@ namespace ReactiveProperty.Tests.Helpers
 
             public string Name
             {
-                get { return this.name; }
-                set { this.SetProperty(ref this.name, value); }
+                get => this.name; set => this.SetProperty(ref this.name, value);
             }
 
             private bool isRemoved;
 
             public bool IsRemoved
             {
-                get { return this.isRemoved; }
-                set { this.SetProperty(ref this.isRemoved, value); }
+                get => this.isRemoved; set => this.SetProperty(ref this.isRemoved, value);
             }
 
         }

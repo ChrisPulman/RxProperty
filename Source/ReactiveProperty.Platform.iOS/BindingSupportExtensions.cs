@@ -9,6 +9,9 @@ using UIKit;
 
 namespace Reactive.Bindings
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class BindingSupportExtensions
     {
         /// <summary>
@@ -29,16 +32,15 @@ namespace Reactive.Bindings
         {
             var d = new CompositeDisposable();
 
-            bool isUpdating = false;
-            string propertyName;
-            var setter = AccessorCache<TView>.LookupSet(propertySelector, out propertyName);
+            var isUpdating = false;
+            var setter = AccessorCache<TView>.LookupSet(propertySelector, out var propertyName);
             source
                 .Where(_ => !isUpdating)
                 .Subscribe(x => setter(self, x))
                 .AddTo(d);
             if (updateSourceTrigger != null)
             {
-                var getter = AccessorCache<TView>.LookupGet(propertySelector, out propertyName);
+                Func<TView, TProperty> getter = AccessorCache<TView>.LookupGet(propertySelector, out propertyName);
                 updateSourceTrigger(self).Subscribe(_ =>
                 {
                     isUpdating = true;
@@ -114,10 +116,7 @@ namespace Reactive.Bindings
             this TView self,
             Action<TView, TProperty> setter,
             ReactiveProperty<TProperty> source)
-            where TView : UIView
-        {
-            return self.SetBinding(setter, null, source, null);
-        }
+            where TView : UIView => self.SetBinding(setter, null, source, null);
 
         /// <summary>
         /// Data binding method.
@@ -136,8 +135,7 @@ namespace Reactive.Bindings
         {
             var d = new CompositeDisposable();
 
-            string propertyName;
-            var setter = AccessorCache<TView>.LookupSet(propertySelector, out propertyName);
+            Action<TView, TProperty> setter = AccessorCache<TView>.LookupSet(propertySelector, out var propertyName);
             source
                 .Subscribe(x => setter(self, x))
                 .AddTo(d);

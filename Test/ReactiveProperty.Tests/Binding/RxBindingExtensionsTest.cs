@@ -12,6 +12,24 @@ using System.Diagnostics;
 
 namespace ReactiveProperty.Tests.Binding
 {
+    public class Poco : INotifyPropertyChanged
+    {
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        public string Name
+        {
+            get => this.name; set => this.SetProperty(ref this.name, value);
+        }
+
+        private void SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            field = value;
+            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
     [TestClass]
     public class RxBindingExtensionsTest
     {
@@ -30,13 +48,35 @@ namespace ReactiveProperty.Tests.Binding
         }
 
         [TestMethod]
+        public void BindToOneWayToSourceTest()
+        {
+            var target = new ReactiveProperty<string>();
+            var obj = new Poco();
+
+            target.BindTo(obj,
+                o => o.Name,
+                mode: BindingMode.OneWayToSource,
+                convertBack: s =>
+                {
+                    Debug.WriteLine(s);
+                    return s + "!";
+                },
+                targetUpdateTrigger: obj.ObserveProperty(o => o.Name).ToUnit());
+
+            obj.Name.IsNull();
+
+            obj.Name = "Hello";
+            target.Value.Is("Hello!");
+        }
+
+        [TestMethod]
         public void BindToOnwWayConvertTest()
         {
             var target = new ReactiveProperty<int>();
             var obj = new Poco();
 
             target.BindTo(
-                obj, 
+                obj,
                 o => o.Name,
                 convert: i => "value is " + i);
 
@@ -44,25 +84,6 @@ namespace ReactiveProperty.Tests.Binding
 
             target.Value = 1;
             obj.Name.Is("value is 1");
-        }
-
-        [TestMethod]
-        public void BindToTwoWayTest()
-        {
-            var target = new ReactiveProperty<string>();
-            var obj = new Poco();
-
-            target.BindTo(obj,
-                o => o.Name,
-                mode: BindingMode.TwoWay,
-                targetUpdateTrigger: obj.ObserveProperty(o => o.Name).ToUnit());
-            obj.Name.IsNull();
-
-            target.Value = "Hello world";
-            obj.Name.Is("Hello world");
-
-            obj.Name = "tanaka";
-            target.Value.Is("tanaka");
         }
 
         [TestMethod]
@@ -92,47 +113,22 @@ namespace ReactiveProperty.Tests.Binding
         }
 
         [TestMethod]
-        public void BindToOneWayToSourceTest()
+        public void BindToTwoWayTest()
         {
             var target = new ReactiveProperty<string>();
             var obj = new Poco();
 
             target.BindTo(obj,
                 o => o.Name,
-                mode: BindingMode.OneWayToSource,
-                convertBack: s =>
-                {
-                    Debug.WriteLine(s);
-                    return s + "!";
-                },
+                mode: BindingMode.TwoWay,
                 targetUpdateTrigger: obj.ObserveProperty(o => o.Name).ToUnit());
-
             obj.Name.IsNull();
 
-            obj.Name = "Hello";
-            target.Value.Is("Hello!");
+            target.Value = "Hello world";
+            obj.Name.Is("Hello world");
+
+            obj.Name = "tanaka";
+            target.Value.Is("tanaka");
         }
-
-
     }
-
-    public class Poco : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
-        private void SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-        {
-            field = value;
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private string name;
-
-        public string Name
-        {
-            get { return this.name; }
-            set { this.SetProperty(ref this.name, value); }
-        }
-
-    }
-
 }

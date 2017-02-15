@@ -7,24 +7,70 @@ using Microsoft.Xaml.Interactivity;
 
 namespace Reactive.Bindings.Interactivity
 {
+    /// <summary>
+    /// ///
+    /// </summary>
+    /// <seealso cref="Windows.UI.Xaml.DependencyObject"/>
+    /// <seealso cref="Microsoft.Xaml.Interactivity.IBehavior"/>
     public abstract class TriggerBase : DependencyObject, IBehavior
     {
+        /// <summary>
+        /// The actions implementation property
+        /// </summary>
         public static readonly DependencyProperty ActionsImplProperty =
             DependencyProperty.Register("ActionsImpl", typeof(ActionCollection), typeof(TriggerBase), new PropertyMetadata(null));
 
-
-
-        internal TriggerBase(Type associatedType)
-        {
-            this.AssociatedType = associatedType;
-        }
-
+        /// <summary>
+        /// The associated object changed
+        /// </summary>
         public EventHandler AssociatedObjectChanged;
 
+        internal TriggerBase(Type associatedType) => this.AssociatedType = associatedType;
+
+        /// <summary>
+        /// Occurs when [preview invoke].
+        /// </summary>
+        public event EventHandler<PreviewInvokeEventArgs> PreviewInvoke;
+
+        /// <summary>
+        /// Actionsプロパティは、TriggerBehaviorのベースクラスにいる状態だと認識しないっぽいので 泣く泣くこれを継承したクラスで以下のようなコードを書くことで対応することに…。
+        /// <code>
+        /// public ActionCollection Actions { get { return tshi.ActionImpl; } }
+        /// </code>
+        /// </summary>
+        public ActionCollection ActionsImpl
+        {
+            get
+            {
+                var actions = (ActionCollection)GetValue(ActionsImplProperty);
+                if (actions == null)
+                {
+                    actions = new ActionCollection();
+                    this.SetValue(ActionsImplProperty, actions);
+                }
+                return actions;
+            }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="T:Windows.UI.Xaml.DependencyObject"/> to which the <seealso
+        /// cref="T:Microsoft.Xaml.Interactivity.IBehavior"/> is attached.
+        /// </summary>
         public DependencyObject AssociatedObject { get; private set; }
 
+        /// <summary>
+        /// Gets the type of the associated.
+        /// </summary>
+        /// <value>The type of the associated.</value>
         public Type AssociatedType { get; private set; }
 
+        /// <summary>
+        /// Attaches to the specified object.
+        /// </summary>
+        /// <param name="associatedObject">
+        /// The <see cref="T:Windows.UI.Xaml.DependencyObject"/> to which the <seealso
+        /// cref="T:Microsoft.Xaml.Interactivity.IBehavior"/> will be attached.
+        /// </param>
         public void Attach(DependencyObject associatedObject)
         {
             if (this.AssociatedObject == associatedObject)
@@ -37,12 +83,57 @@ namespace Reactive.Bindings.Interactivity
             this.AssociatedObject = associatedObject;
             this.OnAssociatedObjectChanged();
 
-            foreach (var action in this.ActionsImpl.OfType<IBehavior>())
+            foreach (IBehavior action in this.ActionsImpl.OfType<IBehavior>())
             {
                 action.Attach(associatedObject);
             }
 
             this.OnAttached();
+        }
+
+        /// <summary>
+        /// Detaches this instance from its associated object.
+        /// </summary>
+        public void Detach()
+        {
+            this.OnDetaching();
+            this.AssociatedObject = null;
+            this.OnAssociatedObjectChanged();
+
+            foreach (IBehavior action in this.ActionsImpl.OfType<IBehavior>())
+            {
+                action.Detach();
+            }
+        }
+
+        /// <summary>
+        /// Invokes the actions.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
+        /// <returns></returns>
+        protected IEnumerable<object> InvokeActions(object parameter)
+        {
+            PreviewInvokeEventArgs args = this.OnPreviewInvoke();
+            if (args.Cancelling)
+            {
+                return Enumerable.Empty<object>();
+            }
+
+            return Interaction.ExecuteActions(this, this.ActionsImpl, parameter);
+        }
+
+        /// <summary>
+        /// Called when [attached].
+        /// </summary>
+        protected virtual void OnAttached()
+        {
+        }
+
+        /// <summary>
+        /// Called when [detaching].
+        /// </summary>
+        protected virtual void OnDetaching()
+        {
         }
 
         private void AssertAttachArgument(DependencyObject associatedObject)
@@ -65,77 +156,12 @@ namespace Reactive.Bindings.Interactivity
             }
         }
 
-        public void Detach()
-        {
-            this.OnDetaching();
-            this.AssociatedObject = null;
-            this.OnAssociatedObjectChanged();
-
-            foreach (var action in this.ActionsImpl.OfType<IBehavior>())
-            {
-                action.Detach();
-            }
-        }
-
-        protected virtual void OnAttached()
-        {
-        }
-
-        protected virtual void OnDetaching()
-        {
-        }
-
-        private void OnAssociatedObjectChanged()
-        {
-            var h = this.AssociatedObjectChanged;
-            if (h != null)
-            {
-                h(this, EventArgs.Empty);
-            }
-        }
-        public event EventHandler<PreviewInvokeEventArgs> PreviewInvoke;
-
-        /// <summary>
-        /// Actionsプロパティは、TriggerBehaviorのベースクラスにいる状態だと認識しないっぽいので
-        /// 泣く泣くこれを継承したクラスで以下のようなコードを書くことで対応することに…。
-        /// <code>
-        /// public ActionCollection Actions { get { return tshi.ActionImpl; } }
-        /// </code>
-        /// </summary>
-        public ActionCollection ActionsImpl
-        {
-            get
-            {
-                var actions = (ActionCollection)GetValue(ActionsImplProperty);
-                if (actions == null)
-                {
-                    actions = new ActionCollection();
-                    this.SetValue(ActionsImplProperty, actions);
-                }
-                return actions;
-            }
-        }
-
-
-        protected IEnumerable<object> InvokeActions(object parameter)
-        {
-            var args = this.OnPreviewInvoke();
-            if (args.Cancelling)
-            {
-                return Enumerable.Empty<object>();
-            }
-
-            return Interaction.ExecuteActions(this, this.ActionsImpl, parameter);
-        }
+        private void OnAssociatedObjectChanged() => this.AssociatedObjectChanged?.Invoke(this, EventArgs.Empty);
 
         private PreviewInvokeEventArgs OnPreviewInvoke()
         {
             var args = new PreviewInvokeEventArgs();
-            var h = this.PreviewInvoke;
-            if (h != null)
-            {
-                h(this, args);
-            }
+            this.PreviewInvoke?.Invoke(this, args);
 
             return args;
         }

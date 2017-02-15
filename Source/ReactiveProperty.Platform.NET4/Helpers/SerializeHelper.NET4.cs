@@ -10,14 +10,14 @@ using System;
 
 namespace Reactive.Bindings.Helpers
 {
-    // .NET 4 only
+
+    /// <summary>
+    /// .NET 4 only Serialize Helper
+    /// </summary>
     public static class SerializeHelper
     {
-        static IEnumerable<PropertyInfo> GetIValueProperties(object target)
-        {
-            return target.GetType().GetProperties()
+        static IEnumerable<PropertyInfo> GetIValueProperties(object target) => target.GetType().GetProperties()
                 .Where(pi => typeof(IReactiveProperty).IsAssignableFrom(pi.PropertyType));
-        }
 
         /// <summary>
         /// Serialize target contains ReactiveProperty's Value.
@@ -31,7 +31,7 @@ namespace Reactive.Bindings.Helpers
                 .ToDictionary(pi => pi.Name, pi =>
                 {
                     var ivalue = (IReactiveProperty)pi.GetValue(target, null);
-                    return (ivalue != null) ? ivalue.Value : null;
+                    return ivalue?.Value;
                 });
 
             var sb = new StringBuilder();
@@ -75,7 +75,10 @@ namespace Reactive.Bindings.Helpers
                 if (values.TryGetValue(item.pi.Name, out value))
                 {
                     var ivalue = (IReactiveProperty)item.pi.GetValue(target, null);
-                    if (ivalue != null) ivalue.Value = value;
+                    if (ivalue != null)
+                    {
+                        ivalue.Value = value;
+                    }
                 }
             }
         }

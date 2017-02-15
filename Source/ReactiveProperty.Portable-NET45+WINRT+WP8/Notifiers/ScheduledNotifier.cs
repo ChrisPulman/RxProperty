@@ -15,10 +15,7 @@ namespace Reactive.Bindings.Notifiers
         /// <summary>
         /// Use scheduler is Scheduler.Immediate.
         /// </summary>
-        public ScheduledNotifier()
-        {
-            this.scheduler = Scheduler.Immediate;
-        }
+        public ScheduledNotifier() => this.scheduler = Scheduler.Immediate;
         /// <summary>
         /// Use scheduler is argument's scheduler.
         /// </summary>

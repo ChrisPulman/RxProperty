@@ -33,10 +33,7 @@ namespace ReactiveProperty.Tests.Extensions
         }
 
         [TestMethod]
-        public void Create()
-        {
-            this.target.Count.Is(0);
-        }
+        public void Create() => this.target.Count.Is(0);
 
         [TestMethod]
         public void Add()

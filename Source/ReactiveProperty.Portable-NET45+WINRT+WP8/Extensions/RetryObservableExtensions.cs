@@ -4,6 +4,9 @@ using System.Reactive.Linq;
 
 namespace Reactive.Bindings.Extensions
 {
+    /// <summary>
+    /// ///
+    /// </summary>
     public static class RetryObservableExtensions
     {
         /// <summary>
@@ -39,7 +42,8 @@ namespace Reactive.Bindings.Extensions
             source.OnErrorRetry(onError, retryCount, TimeSpan.Zero);
 
         /// <summary>
-        /// When catched exception, do onError action and repeat observable sequence after delay time during within retryCount.
+        /// When catched exception, do onError action and repeat observable sequence after delay time
+        /// during within retryCount.
         /// </summary>
         public static IObservable<TSource> OnErrorRetry<TSource, TException>(
             this IObservable<TSource> source, Action<TException> onError, int retryCount, TimeSpan delay)
@@ -47,33 +51,32 @@ namespace Reactive.Bindings.Extensions
             source.OnErrorRetry(onError, retryCount, delay, Scheduler.Default);
 
         /// <summary>
-        /// When catched exception, do onError action and repeat observable sequence after delay time(work on delayScheduler) during within retryCount.
+        /// When catched exception, do onError action and repeat observable sequence after delay
+        /// time(work on delayScheduler) during within retryCount.
         /// </summary>
         public static IObservable<TSource> OnErrorRetry<TSource, TException>(
             this IObservable<TSource> source, Action<TException> onError, int retryCount, TimeSpan delay, IScheduler delayScheduler)
-            where TException : Exception
-        {
-            var result = Observable.Defer(() =>
-            {
-                var dueTime = (delay.Ticks < 0) ? TimeSpan.Zero : delay;
-                var empty = Observable.Empty<TSource>();
-                var count = 0;
-
-                IObservable<TSource> self = null;
-                self = source.Catch((TException ex) =>
+            where TException : Exception =>
+            Observable.Defer(() =>
                 {
-                    onError(ex);
+                    TimeSpan dueTime = (delay.Ticks < 0) ? TimeSpan.Zero : delay;
+                    IObservable<TSource> empty = Observable.Empty<TSource>();
+                    var count = 0;
 
-                    return (++count < retryCount)
-                        ? (dueTime == TimeSpan.Zero)
-                            ? self.SubscribeOn(Scheduler.CurrentThread)
-                            : empty.Delay(dueTime, delayScheduler).Concat(self).SubscribeOn(Scheduler.CurrentThread)
-                        : Observable.Throw<TSource>(ex);
+#pragma warning disable RCS1127 // Merge local declaration with initialization.
+                    IObservable<TSource> self = null;
+#pragma warning restore RCS1127 // Merge local declaration with initialization.
+                    self = source.Catch((TException ex) =>
+                    {
+                        onError(ex);
+
+                        return (++count < retryCount)
+                            ? (dueTime == TimeSpan.Zero)
+                                ? self.SubscribeOn(Scheduler.CurrentThread)
+                                : empty.Delay(dueTime, delayScheduler).Concat(self).SubscribeOn(Scheduler.CurrentThread)
+                            : Observable.Throw<TSource>(ex);
+                    });
+                    return self;
                 });
-                return self;
-            });
-
-            return result;
-        }
     }
 }

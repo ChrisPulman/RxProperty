@@ -40,8 +40,16 @@ namespace Sample.ViewModels
                 .SetValidateNotifyError(async x =>
                 {
                     await Task.Delay(2000);
-                    if (x == null) return null;
-                    if (x.Contains("a")) return "'a' shouldn't be contained";
+                    if (x == null)
+                    {
+                        return null;
+                    }
+
+                    if (x.Contains("a"))
+                    {
+                        return "'a' shouldn't be contained";
+                    }
+
                     return null;
                 })
                 .SetValidateNotifyError(xs =>
@@ -50,8 +58,16 @@ namespace Sample.ViewModels
                         .Throttle(TimeSpan.FromMilliseconds(500))
                         .Select(x =>
                         {
-                            if (x == null) return null;
-                            if (x.Contains("b")) return "'b' shouldn't be contained";
+                            if (x == null)
+                            {
+                                return null;
+                            }
+
+                            if (x.Contains("b"))
+                            {
+                                return "'b' shouldn't be contained";
+                            }
+
                             return null;
                         });
                 });

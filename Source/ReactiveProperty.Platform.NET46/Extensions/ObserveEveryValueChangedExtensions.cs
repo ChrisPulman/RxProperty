@@ -6,15 +6,28 @@ using System.Windows.Media;
 
 namespace Reactive.Bindings.Extensions
 {
+    /// <summary>
+    /// ///
+    /// </summary>
     public static class ObserveEveryValueChangedExtensions
     {
         /// <summary>
         /// Publish target property when value is changed. If source is destructed, publish OnCompleted.
         /// </summary>
+        /// <typeparam name="TSource">The type of the source.</typeparam>
+        /// <typeparam name="TProperty">The type of the property.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="propertySelector">The property selector.</param>
+        /// <param name="comparer">The comparer.</param>
+        /// <returns></returns>
         public static IObservable<TProperty> ObserveEveryValueChanged<TSource, TProperty>(this TSource source, Func<TSource, TProperty> propertySelector, IEqualityComparer<TProperty> comparer = null)
             where TSource : class
         {
-            if (source == null) return Observable.Empty<TProperty>();
+            if (source == null)
+            {
+                return Observable.Empty<TProperty>();
+            }
+
             comparer = comparer ?? EqualityComparer<TProperty>.Default;
 
             var reference = new WeakReference(source);

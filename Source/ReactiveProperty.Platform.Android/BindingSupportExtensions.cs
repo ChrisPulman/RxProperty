@@ -9,6 +9,9 @@ using System.Reactive.Linq;
 
 namespace Reactive.Bindings
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class BindingSupportExtensions
     {
         /// <summary>

@@ -17,22 +17,13 @@ namespace ReactiveProperty.Tests
         private TestTarget target;
 
         [TestInitialize]
-        public void Initialize()
-        {
-            this.target = new TestTarget();
-        }
+        public void Initialize() => this.target = new TestTarget();
 
         [TestCleanup]
-        public void Cleanup()
-        {
-            this.target = null;
-        }
+        public void Cleanup() => this.target = null;
 
         [TestMethod]
-        public void InitialState()
-        {
-            this.target.RequiredProperty.HasErrors.IsTrue();
-        }
+        public void InitialState() => this.target.RequiredProperty.HasErrors.IsTrue();
 
         [TestMethod]
         public void AnnotationTest()
