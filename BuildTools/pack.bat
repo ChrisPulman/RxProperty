@@ -1,1 +1,1 @@
-nuget pack ReactiveProperty.nuspec
+nuget pack RxProperty.nuspec

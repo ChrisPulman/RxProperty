@@ -47,9 +47,9 @@ namespace Reactive.Bindings.Internal
         private static Delegate CreateSetAccessor<TProperty>(Expression<Func<TType, TProperty>> propertySelector)
         {
             var propertyInfo = (PropertyInfo)((MemberExpression)propertySelector.Body).Member;
-            ParameterExpression selfParameter = Expression.Parameter(typeof(TType), "self");
-            ParameterExpression valueParameter = Expression.Parameter(typeof(TProperty), "value");
-            BinaryExpression body = Expression.Assign(Expression.Property(selfParameter, propertyInfo), valueParameter);
+            var selfParameter = Expression.Parameter(typeof(TType), "self");
+            var valueParameter = Expression.Parameter(typeof(TProperty), "value");
+            var body = Expression.Assign(Expression.Property(selfParameter, propertyInfo), valueParameter);
             var lambda = Expression.Lambda<Action<TType, TProperty>>(body, selfParameter, valueParameter);
             return lambda.Compile();
         }

@@ -31,21 +31,21 @@ namespace Sample.ViewModels
             // mode off DistinctUntilChanged, because if Unit no send any values.
             var none = ReactivePropertyMode.None;
 
-            this.MouseMove = new ReactiveProperty<Tuple<int, int>>(mode: none);
-            this.MouseDown = new ReactiveProperty<Unit>(mode: none);
-            this.MouseEnter = new ReactiveProperty<Unit>(mode: none);
+            MouseMove = new ReactiveProperty<Tuple<int, int>>(mode: none);
+            MouseDown = new ReactiveProperty<Unit>(mode: none);
+            MouseEnter = new ReactiveProperty<Unit>(mode: none);
 
-            this.CurrentPoint = this.MouseMove
+            CurrentPoint = MouseMove
                 .Select(p => string.Format("X:{0} Y:{1}", p.Item1, p.Item2))
                 .ToReactiveProperty();
 
-            this.Entered = this.MouseEnter
+            Entered = MouseEnter
                 .Select(_ => Observable.Timer(TimeSpan.Zero, TimeSpan.FromSeconds(1)))
                 .Switch()
                 .Select(x => "entered:" + x + "sec")
                 .ToReactiveProperty();
 
-            this.AlertMessage = this.MouseDown.Select(_ => "MouseDown!").ToReactiveProperty(mode: none);
+            this.AlertMessage = MouseDown.Select(_ => "MouseDown!").ToReactiveProperty(mode: none);
         }
     }
 

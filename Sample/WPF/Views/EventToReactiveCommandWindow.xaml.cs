@@ -1,19 +1,11 @@
-﻿using Microsoft.Win32;
-using Reactive.Bindings.Interactivity;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Reactive.Linq;
+using System.Windows;
+using Microsoft.Win32;
+using Reactive.Bindings.Interactivity;
+
+using System;
 
 namespace WPF.Views
 {
@@ -31,7 +23,6 @@ namespace WPF.Views
     // Converter
     public class OpenFileDialogConverter : ReactiveConverter<EventArgs, string>
     {
-
         protected override IObservable<string> OnConvert(IObservable<EventArgs> source)
         {
             return source

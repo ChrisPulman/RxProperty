@@ -17,58 +17,67 @@ namespace ReactiveProperty.Tests
         private TestTarget target;
 
         [TestInitialize]
-        public void Initialize() => this.target = new TestTarget();
+        public void Initialize()
+        {
+            this.target = new TestTarget();
+        }
 
         [TestCleanup]
-        public void Cleanup() => this.target = null;
+        public void Cleanup()
+        {
+            this.target = null;
+        }
 
         [TestMethod]
-        public void InitialState() => this.target.RequiredProperty.HasErrors.IsTrue();
+        public void InitialState()
+        {
+            target.RequiredProperty.HasErrors.IsTrue();
+        }
 
         [TestMethod]
         public void AnnotationTest()
         {
             var errors = new List<IEnumerable>();
-            this.target.RequiredProperty
+            target.RequiredProperty
                 .ObserveErrorChanged
                 .Where(x => x != null)
                 .Subscribe(errors.Add);
             errors.Count.Is(1);
             errors[0].Cast<string>().Is("error!");
-            this.target.RequiredProperty.HasErrors.IsTrue();
+            target.RequiredProperty.HasErrors.IsTrue();
 
-            this.target.RequiredProperty.Value = "a";
+            target.RequiredProperty.Value = "a";
             errors.Count.Is(1);
-            this.target.RequiredProperty.HasErrors.IsFalse();
+            target.RequiredProperty.HasErrors.IsFalse();
 
-            this.target.RequiredProperty.Value = null;
+            target.RequiredProperty.Value = null;
             errors.Count.Is(2);
             errors[1].Cast<string>().Is("error!");
-            this.target.RequiredProperty.HasErrors.IsTrue();
+            target.RequiredProperty.HasErrors.IsTrue();
         }
 
         [TestMethod]
         public void BothTest()
         {
             IEnumerable error = null;
-            this.target.BothProperty
+            target.BothProperty
                 .ObserveErrorChanged
                 .Subscribe(x => error = x);
 
-            this.target.BothProperty.HasErrors.IsTrue();
+            target.BothProperty.HasErrors.IsTrue();
             error.OfType<string>().Is("required");
 
-            this.target.BothProperty.Value = "a";
-            this.target.BothProperty.HasErrors.IsFalse();
+            target.BothProperty.Value = "a";
+            target.BothProperty.HasErrors.IsFalse();
             error.IsNull();
 
-            this.target.BothProperty.Value = "aaaaaa";
-            this.target.BothProperty.HasErrors.IsTrue();
+            target.BothProperty.Value = "aaaaaa";
+            target.BothProperty.HasErrors.IsTrue();
             error.IsNotNull();
             error.Cast<string>().Is("5over");
 
-            this.target.BothProperty.Value = null;
-            this.target.BothProperty.HasErrors.IsTrue();
+            target.BothProperty.Value = null;
+            target.BothProperty.HasErrors.IsTrue();
             error.Cast<string>().Is("required");
         }
 
@@ -76,19 +85,19 @@ namespace ReactiveProperty.Tests
         public void TaskTest()
         {
             var errors = new List<IEnumerable>();
-            this.target.TaskValidationTestProperty
+            target.TaskValidationTestProperty
                 .ObserveErrorChanged
                 .Where(x => x != null)
                 .Subscribe(errors.Add);
             errors.Count.Is(1);
             errors[0].OfType<string>().Is("required");
 
-            this.target.TaskValidationTestProperty.Value = "a";
-            this.target.TaskValidationTestProperty.HasErrors.IsFalse();
+            target.TaskValidationTestProperty.Value = "a";
+            target.TaskValidationTestProperty.HasErrors.IsFalse();
             errors.Count.Is(1);
 
-            this.target.TaskValidationTestProperty.Value = null;
-            this.target.TaskValidationTestProperty.HasErrors.IsTrue();
+            target.TaskValidationTestProperty.Value = null;
+            target.TaskValidationTestProperty.HasErrors.IsTrue();
             errors.Count.Is(2);
         }
 
@@ -211,10 +220,10 @@ namespace ReactiveProperty.Tests
         public TestTarget()
         {
             this.RequiredProperty = new ReactiveProperty<string>()
-                .SetValidateAttribute(() => this.RequiredProperty);
+                .SetValidateAttribute(() => RequiredProperty);
 
             this.BothProperty = new ReactiveProperty<string>()
-                .SetValidateAttribute(() => this.BothProperty)
+                .SetValidateAttribute(() => BothProperty)
                 .SetValidateNotifyError(s => string.IsNullOrWhiteSpace(s) ? "required" : null);
 
             this.TaskValidationTestProperty = new ReactiveProperty<string>()

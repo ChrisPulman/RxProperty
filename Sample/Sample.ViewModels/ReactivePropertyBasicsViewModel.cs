@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Reactive.Concurrency; // using Namespace
 using System.Reactive.Linq;
-using System.Windows;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-using System.Reactive.Concurrency; // using Namespace
 
 namespace Sample.ViewModels
 {
@@ -18,19 +17,29 @@ namespace Sample.ViewModels
 
             // binding value from UI Control if no set initialValue then initialValue is default(T).
             // int:0, string:null...
-            this.InputText = new ReactiveProperty<string>(initialValue: "", mode: allMode);
+            InputText = new ReactiveProperty<string>(initialValue: "", mode: allMode);
 
             // send value to UI Control
-            this.DisplayText = this.InputText
+            DisplayText = InputText
                 .Select(s => s.ToUpper())       // rx query1
                 .ObserveOn(TaskPoolScheduler.Default)
                 .Delay(TimeSpan.FromSeconds(1)) // rx query2
                 .ObserveOnUIDispatcher()
                 .ToReadOnlyReactiveProperty();          // convert to ReactiveProperty
+
+            ReplaceTextCommand = InputText
+                .Select(s => !string.IsNullOrEmpty(s))   // condition sequence of CanExecute
+                .ToReactiveCommand(); // convert to ReactiveCommand
+
+            // ReactiveCommand's Subscribe is set ICommand's Execute ReactiveProperty.Value set is push(&
+            // set) value
+            ReplaceTextCommand.Subscribe(_ => InputText.Value = "Hello, ReactiveProperty!");
         }
 
         public ReadOnlyReactiveProperty<string> DisplayText { get; }
 
         public ReactiveProperty<string> InputText { get; }
+
+        public RxCommand ReplaceTextCommand { get; }
     }
 }

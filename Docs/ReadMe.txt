@@ -12,7 +12,7 @@
 ReactiveProperty is MVVM and Asynchronous Extensions for Reactive Extensions.
 
 * ReactiveProperty - Two-way bindable IObservable, from V to VM and VM to V
-* ReactiveCommand - Convert observable condition sequence to ICommand
+* RxCommand - Convert observable condition sequence to ICommand
 * Typesafe convert INotifyPropertyChanged to ReactiveProperty
 * Event to ReactiveProperty Blend behavior
 * This means V -> VM -> M -> VM -> V completely connected in Reactive.
@@ -51,11 +51,11 @@ Install-Package ReactiveProperty
 rprop ReactiveProperty.snippet
 -> ReactiveProperty<T> PropertyName { get; private set; }
 
-rcomm ReactiveCommand.snippet
--> ReactiveCommand CommandName { get; private set; }
+rcomm RxCommand.snippet
+-> RxCommand CommandName { get; private set; }
 
-rcommg ReactiveCommandGeneric.snippet
--> ReactiveCommand<T> CommandName { get; private set; }
+rcommg RxCommandGeneric.snippet
+-> RxCommand<T> CommandName { get; private set; }
 
 rcoll ReactiveCollection.snippet
 -> ReactiveCollection<T> CollectionName { get; private set; }
@@ -67,7 +67,7 @@ rrcoll ReadOnlyReactiveCollection.snippet
 
 Reactive.Bindings
 -> ReacitveProperty - two-way bindable IObservable
--> ReactiveCommand - declaratively notify CanExecute from inside
+-> RxCommand - declaratively notify CanExecute from inside
 -> ReactiveCollection - IObservable as ObservableCollection(and operate on IScheduler)
 -> ReadOnlyReactiveCollection - IObservable as ReadOnlyObservableCollection
 -> ReactiveTimer - Schedulable and hot(stoppable/continuable) timer.
@@ -80,7 +80,7 @@ Reactive.Bindings.Extensions
 -> Extension Methods for interface(IObservble<T>, INotifyPropertyChanged, etc...)
 
 Reactive.Bindings.Interactivity
--> EventToReactiveProperty/EventToReactiveCommand - Trigger that converts UIEvent to ReactiveProperty/ICommand.
+-> EventToReactiveProperty/EventToRxCommand - Trigger that converts UIEvent to ReactiveProperty/ICommand.
 
 Reactive.Bindings.Notifiers
 -> ScheduledNotifier - Notify value on scheduler(use with asynchronous progress report).
@@ -202,7 +202,7 @@ See https://github.com/runceel/ReactiveProperty/blob/master/ReleaseNote.md .
 2014-04-04 ver 0.4.2.beta3
 	Add
 		Reactive.Bindings.Binding namespace. Bind to ReactiveProperty to POCO property.
-		ReactiveCommand add ToEventHandler method.
+		RxCommand add ToEventHandler method.
 
 2014-04-04 ver 0.4.2.beta2
 	Add
@@ -271,7 +271,7 @@ See https://github.com/runceel/ReactiveProperty/blob/master/ReleaseNote.md .
     Fix
         Fix bugs, WebRequestExtensions.UploadValues - values no concatenate "&"
         No crash in silverlight design view
-        No throw exception when call dispose multiple in ReactiveProperty and ReactiveCommand
+        No throw exception when call dispose multiple in ReactiveProperty and RxCommand
     Change
         ReactivePropertyMode's default changes to DistinctUntilChanged|RaiseLatestValueOnSubscribe
         (Changed:ver0.2 default behavior is DistinctUntilChanged only)
@@ -287,10 +287,10 @@ See https://github.com/runceel/ReactiveProperty/blob/master/ReleaseNote.md .
         INotifyPropertyChangedExtensions.ObserveProperty isPushCurrentValueAtFirst overload
         (Changed:default behavior is true, ver.0.1 was false)
         INotifyPropertyChangingExtensions(WPF/WP7)
-        ReactiveCommand.Execute() overload
+        RxCommand.Execute() overload
         ReactiveCollection add AddOnScheduler, ClearOnScheduler, etc...
     Change
-        ReactiveCommand<T>.Dispose() send OnCompleted to subscribers
+        RxCommand<T>.Dispose() send OnCompleted to subscribers
         ReactiveCollection remove notify on scheduler
 
 2011-10-06 ver 0.1.0.0

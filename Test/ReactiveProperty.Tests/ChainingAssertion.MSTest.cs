@@ -9,21 +9,21 @@
 
 /* -- Tutorial --
  * | at first, include this file on MSTest Project.
- *
+ * 
  * | three example, "Is" overloads.
- *
+ * 
  * // This same as Assert.AreEqual(25, Math.Pow(5, 2))
  * Math.Pow(5, 2).Is(25);
- *
+ * 
  * // This same as Assert.IsTrue("foobar".StartsWith("foo") && "foobar".EndWith("bar"))
  * "foobar".Is(s => s.StartsWith("foo") && s.EndsWith("bar"));
- *
+ * 
  * // This same as CollectionAssert.AreEqual(Enumerable.Range(1,5), new[]{1, 2, 3, 4, 5})
  * Enumerable.Range(1, 5).Is(1, 2, 3, 4, 5);
- *
+ * 
  * | CollectionAssert
  * | if you want to use CollectionAssert Methods then use Linq to Objects and Is
- *
+ * 
  * var array = new[] { 1, 3, 7, 8 };
  * array.Count().Is(4);
  * array.Contains(8).IsTrue(); // IsTrue() == Is(true)
@@ -33,7 +33,7 @@
  * array.OrderBy(x => x).Is(array); // IsOrdered
  *
  * | Other Assertions
- *
+ * 
  * // Null Assertions
  * Object obj = null;
  * obj.IsNull();             // Assert.IsNull(obj)
@@ -51,9 +51,9 @@
  * // Type Assertion
  * "foobar".IsInstanceOf<string>(); // Assert.IsInstanceOfType
  * (999).IsNotInstanceOf<double>(); // Assert.IsNotInstanceOfType
- *
+ * 
  * | Advanced Collection Assertion
- *
+ * 
  * var lower = new[] { "a", "b", "c" };
  * var upper = new[] { "A", "B", "C" };
  *
@@ -63,59 +63,59 @@
  *
  * // or you can use Linq to Objects - SequenceEqual
  * lower.SequenceEqual(upper, StringComparer.InvariantCultureIgnoreCase).Is(true);
- *
+ * 
  * | StructuralEqual
- *
+ * 
  * class MyClass
  * {
  *     public int IntProp { get; set; }
  *     public string StrField;
  * }
- *
+ * 
  * var mc1 = new MyClass() { IntProp = 10, StrField = "foo" };
  * var mc2 = new MyClass() { IntProp = 10, StrField = "foo" };
- *
+ * 
  * mc1.IsStructuralEqual(mc2); // deep recursive value equality compare
- *
+ * 
  * mc1.IntProp = 20;
  * mc1.IsNotStructuralEqual(mc2);
- *
+ * 
  * | DynamicAccessor
- *
+ * 
  * // AsDynamic convert to "dynamic" that can call private method/property/field/indexer.
- *
+ * 
  * // a class and private field/property/method.
  * public class PrivateMock
  * {
  *     private string privateField = "homu";
- *
+ * 
  *     private string PrivateProperty
  *     {
  *         get { return privateField + privateField; }
  *         set { privateField = value; }
  *     }
- *
+ * 
  *     private string PrivateMethod(int count)
  *     {
  *         return string.Join("", Enumerable.Repeat(privateField, count));
  *     }
  * }
- *
+ * 
  * // call private property.
  * var actual = new PrivateMock().AsDynamic().PrivateProperty;
  * Assert.AreEqual("homuhomu", actual);
- *
+ * 
  * // dynamic can't invoke extension methods.
  * // if you want to invoke "Is" then cast type.
  * (new PrivateMock().AsDynamic().PrivateMethod(3) as string).Is("homuhomuhomu");
- *
+ * 
  * // set value
  * var mock = new PrivateMock().AsDynamic();
  * mock.PrivateProperty = "mogumogu";
  * (mock.privateField as string).Is("mogumogu");
- *
+ * 
  * | Exception Test
- *
+ * 
  * // Exception Test(alternative of ExpectedExceptionAttribute)
  * // AssertEx.Throws does not allow derived type
  * // AssertEx.Catch allows derived type
@@ -123,28 +123,28 @@
  * AssertEx.Throws<ArgumentNullException>(() => "foo".StartsWith(null));
  * AssertEx.Catch<Exception>(() => "foo".StartsWith(null));
  * AssertEx.ThrowsContractException(() => // contract method //);
- *
+ * 
  * // return value is occured exception
  * var ex = AssertEx.Throws<InvalidOperationException>(() =>
  * {
  *     throw new InvalidOperationException("foobar operation");
  * });
  * ex.Message.Is(s => s.Contains("foobar")); // additional exception assertion
- *
+ * 
  * // must not throw any exceptions
  * AssertEx.DoesNotThrow(() =>
  * {
  *     // code
  * });
- *
+ * 
  * | Parameterized Test
  * | TestCase takes parameters and send to TestContext's Extension Method "Run".
- *
+ * 
  * [TestClass]
  * public class UnitTest
  * {
  *     public TestContext TestContext { get; set; }
- *
+ * 
  *     [TestMethod]
  *     [TestCase(1, 2, 3)]
  *     [TestCase(10, 20, 30)]
@@ -158,10 +158,10 @@
  *         });
  *     }
  * }
- *
+ * 
  * | TestCaseSource
  * | TestCaseSource can take static field/property that types is only object[][].
- *
+ * 
  * [TestMethod]
  * [TestCaseSource("toaruSource")]
  * public void TestTestCaseSource()
@@ -171,14 +171,14 @@
  *         string.Concat(x, y).Is(z);
  *     });
  * }
- *
+ * 
  * public static object[] toaruSource = new[]
  * {
  *     new object[] {1, 1, "11"},
  *     new object[] {5, 3, "53"},
  *     new object[] {9, 4, "94"}
  * };
- *
+ * 
  * -- more details see project home --*/
 
 using System;
@@ -192,54 +192,13 @@ using System.Reflection;
 
 namespace Microsoft.VisualStudio.TestTools.UnitTesting
 {
+    #region Extensions
+
     [System.Diagnostics.DebuggerStepThroughAttribute]
     [ContractVerification(false)]
     public static partial class AssertEx
     {
-        /// <summary>
-        /// to DynamicAccessor that can call private method/field/property/indexer.
-        /// </summary>
-        public static dynamic AsDynamic<T>(this T target) => new DynamicAccessor<T>(target);
-
-        /// <summary>
-        /// Alternative of ExpectedExceptionAttribute(allow derived type)
-        /// </summary>
-        public static T Catch<T>(Action testCode, string message = "") where T : Exception
-        {
-            var exception = ExecuteCode(testCode);
-            var headerMsg = "Failed Throws<" + typeof(T).Name + ">.";
-            var additionalMsg = string.IsNullOrEmpty(message) ? "" : ", " + message;
-
-            if (exception == null)
-            {
-                var formatted = headerMsg + " No exception was thrown" + additionalMsg;
-                throw new AssertFailedException(formatted);
-            }
-            else if (!typeof(T).IsInstanceOfType(exception))
-            {
-                var formatted = string.Format("{0} Catched:{1}{2}", headerMsg, exception.GetType().Name, additionalMsg);
-                throw new AssertFailedException(formatted);
-            }
-
-            return (T)exception;
-        }
-
-        /// <summary>
-        /// does not throw any exceptions
-        /// </summary>
-        public static void DoesNotThrow(Action testCode, string message = "")
-        {
-            var exception = ExecuteCode(testCode);
-            if (exception != null)
-            {
-                var formatted = string.Format("Failed DoesNotThrow. Catched:{0}{1}", exception.GetType().Name, string.IsNullOrEmpty(message) ? "" : ", " + message);
-                throw new AssertFailedException(formatted);
-            }
-        }
-
-        /// <summary>
-        /// Assert.AreEqual, if T is IEnumerable then CollectionAssert.AreEqual
-        /// </summary>
+        /// <summary>Assert.AreEqual, if T is IEnumerable then CollectionAssert.AreEqual</summary>
         public static void Is<T>(this T actual, T expected, string message = "")
         {
             if (typeof(T) != typeof(String) && typeof(IEnumerable).IsAssignableFrom(typeof(T)))
@@ -251,9 +210,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             Assert.AreEqual(expected, actual, message);
         }
 
-        /// <summary>
-        /// Assert.IsTrue(predicate(value))
-        /// </summary>
+        /// <summary>Assert.IsTrue(predicate(value))</summary>
         public static void Is<T>(this T value, Expression<Func<T, bool>> predicate, string message = "")
         {
             var condition = predicate.Compile().Invoke(value);
@@ -279,43 +236,31 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             Assert.IsTrue(condition, msg);
         }
 
-        /// <summary>
-        /// CollectionAssert.AreEqual
-        /// </summary>
-        public static void Is<T>(this IEnumerable<T> actual, params T[] expected) => Is(actual, expected.AsEnumerable());
-
-        /// <summary>
-        /// CollectionAssert.AreEqual
-        /// </summary>
-        public static void Is<T>(this IEnumerable<T> actual, IEnumerable<T> expected, string message = "") => CollectionAssert.AreEqual(expected.ToArray(), actual.ToArray(), message);
-
-        /// <summary>
-        /// CollectionAssert.AreEqual
-        /// </summary>
-        public static void Is<T>(this IEnumerable<T> actual, IEnumerable<T> expected, IEqualityComparer<T> comparer, string message = "") => Is(actual, expected, comparer.Equals, message);
-
-        /// <summary>
-        /// CollectionAssert.AreEqual
-        /// </summary>
-        public static void Is<T>(this IEnumerable<T> actual, IEnumerable<T> expected, Func<T, T, bool> equalityComparison, string message = "") => CollectionAssert.AreEqual(expected.ToArray(), actual.ToArray(), new ComparisonComparer<T>(equalityComparison), message);
-
-        /// <summary>
-        /// Is(false)
-        /// </summary>
-        public static void IsFalse(this bool value, string message = "") => value.Is(false, message);
-
-        /// <summary>
-        /// Assert.IsInstanceOfType
-        /// </summary>
-        public static TExpected IsInstanceOf<TExpected>(this object value, string message = "")
+        /// <summary>CollectionAssert.AreEqual</summary>
+        public static void Is<T>(this IEnumerable<T> actual, params T[] expected)
         {
-            Assert.IsInstanceOfType(value, typeof(TExpected), message);
-            return (TExpected)value;
+            Is(actual, expected.AsEnumerable());
         }
 
-        /// <summary>
-        /// Assert.AreNotEqual, if T is IEnumerable then CollectionAssert.AreNotEqual
-        /// </summary>
+        /// <summary>CollectionAssert.AreEqual</summary>
+        public static void Is<T>(this IEnumerable<T> actual, IEnumerable<T> expected, string message = "")
+        {
+            CollectionAssert.AreEqual(expected.ToArray(), actual.ToArray(), message);
+        }
+
+        /// <summary>CollectionAssert.AreEqual</summary>
+        public static void Is<T>(this IEnumerable<T> actual, IEnumerable<T> expected, IEqualityComparer<T> comparer, string message = "")
+        {
+            Is(actual, expected, comparer.Equals, message);
+        }
+
+        /// <summary>CollectionAssert.AreEqual</summary>
+        public static void Is<T>(this IEnumerable<T> actual, IEnumerable<T> expected, Func<T, T, bool> equalityComparison, string message = "")
+        {
+            CollectionAssert.AreEqual(expected.ToArray(), actual.ToArray(), new ComparisonComparer<T>(equalityComparison), message);
+        }
+
+        /// <summary>Assert.AreNotEqual, if T is IEnumerable then CollectionAssert.AreNotEqual</summary>
         public static void IsNot<T>(this T actual, T notExpected, string message = "")
         {
             if (typeof(T) != typeof(String) && typeof(IEnumerable).IsAssignableFrom(typeof(T)))
@@ -327,129 +272,101 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             Assert.AreNotEqual(notExpected, actual, message);
         }
 
-        /// <summary>
-        /// CollectionAssert.AreNotEqual
-        /// </summary>
-        public static void IsNot<T>(this IEnumerable<T> actual, params T[] notExpected) => IsNot(actual, notExpected.AsEnumerable());
-
-        /// <summary>
-        /// CollectionAssert.AreNotEqual
-        /// </summary>
-        public static void IsNot<T>(this IEnumerable<T> actual, IEnumerable<T> notExpected, string message = "") => CollectionAssert.AreNotEqual(notExpected.ToArray(), actual.ToArray(), message);
-
-        /// <summary>
-        /// CollectionAssert.AreNotEqual
-        /// </summary>
-        public static void IsNot<T>(this IEnumerable<T> actual, IEnumerable<T> notExpected, IEqualityComparer<T> comparer, string message = "") => IsNot(actual, notExpected, comparer.Equals, message);
-
-        /// <summary>
-        /// CollectionAssert.AreNotEqual
-        /// </summary>
-        public static void IsNot<T>(this IEnumerable<T> actual, IEnumerable<T> notExpected, Func<T, T, bool> equalityComparison, string message = "") => CollectionAssert.AreNotEqual(notExpected.ToArray(), actual.ToArray(), new ComparisonComparer<T>(equalityComparison), message);
-
-        /// <summary>
-        /// Assert.IsNotInstanceOfType
-        /// </summary>
-        public static void IsNotInstanceOf<TWrong>(this object value, string message = "") => Assert.IsNotInstanceOfType(value, typeof(TWrong), message);
-
-        /// <summary>
-        /// Assert.IsNotNull
-        /// </summary>
-        public static void IsNotNull<T>(this T value, string message = "") => Assert.IsNotNull(value, message);
-
-        /// <summary>
-        /// Assert.AreNotSame
-        /// </summary>
-        public static void IsNotSameReferenceAs<T>(this T actual, T notExpected, string message = "") => Assert.AreNotSame(notExpected, actual, message);
-
-        /// <summary>
-        /// Assert by deep recursive value equality compare
-        /// </summary>
-        public static void IsNotStructuralEqual(this object actual, object expected, string message = "")
+        /// <summary>CollectionAssert.AreNotEqual</summary>
+        public static void IsNot<T>(this IEnumerable<T> actual, params T[] notExpected)
         {
-            message = (string.IsNullOrEmpty(message) ? "" : ", " + message);
-            if (object.ReferenceEquals(actual, expected))
-            {
-                throw new AssertFailedException("actual is same reference" + message);
-            };
-
-            if (actual == null)
-            {
-                return;
-            }
-
-            if (expected == null)
-            {
-                return;
-            }
-
-            if (actual.GetType() != expected.GetType())
-            {
-                return;
-            }
-
-            var r = StructuralEqual(actual, expected, new[] { actual.GetType().Name }); // root type
-            if (r.IsEquals)
-            {
-                throw new AssertFailedException("is structural equal" + message);
-            }
+            IsNot(actual, notExpected.AsEnumerable());
         }
 
-        /// <summary>
-        /// Assert.IsNull
-        /// </summary>
-        public static void IsNull<T>(this T value, string message = "") => Assert.IsNull(value, message);
-
-        /// <summary>
-        /// Assert.AreSame
-        /// </summary>
-        public static void IsSameReferenceAs<T>(this T actual, T expected, string message = "") => Assert.AreSame(expected, actual, message);
-
-        /// <summary>
-        /// Assert by deep recursive value equality compare
-        /// </summary>
-        public static void IsStructuralEqual(this object actual, object expected, string message = "")
+        /// <summary>CollectionAssert.AreNotEqual</summary>
+        public static void IsNot<T>(this IEnumerable<T> actual, IEnumerable<T> notExpected, string message = "")
         {
-            message = (string.IsNullOrEmpty(message) ? "" : ", " + message);
-            if (object.ReferenceEquals(actual, expected))
-            {
-                return;
-            }
-
-            if (actual == null)
-            {
-                throw new AssertFailedException("actual is null" + message);
-            }
-
-            if (expected == null)
-            {
-                throw new AssertFailedException("actual is not null" + message);
-            }
-
-            if (actual.GetType() != expected.GetType())
-            {
-                var msg = string.Format("expected type is {0} but actual type is {1}{2}",
-                    expected.GetType().Name, actual.GetType().Name, message);
-                throw new AssertFailedException(msg);
-            }
-
-            var r = StructuralEqual(actual, expected, new[] { actual.GetType().Name }); // root type
-            if (!r.IsEquals)
-            {
-                var msg = string.Format("is not structural equal, failed at {0}, actual = {1} expected = {2}{3}",
-                    string.Join(".", r.Names), r.Left, r.Right, message);
-                throw new AssertFailedException(msg);
-            }
+            CollectionAssert.AreNotEqual(notExpected.ToArray(), actual.ToArray(), message);
         }
 
-        /// <summary>
-        /// Is(true)
-        /// </summary>
-        public static void IsTrue(this bool value, string message = "") => value.Is(true, message);
+        /// <summary>CollectionAssert.AreNotEqual</summary>
+        public static void IsNot<T>(this IEnumerable<T> actual, IEnumerable<T> notExpected, IEqualityComparer<T> comparer, string message = "")
+        {
+            IsNot(actual, notExpected, comparer.Equals, message);
+        }
 
-        /// <summary>
-        /// Alternative of ExpectedExceptionAttribute(not allow derived type)
-        /// </summary>
+        /// <summary>CollectionAssert.AreNotEqual</summary>
+        public static void IsNot<T>(this IEnumerable<T> actual, IEnumerable<T> notExpected, Func<T, T, bool> equalityComparison, string message = "")
+        {
+            CollectionAssert.AreNotEqual(notExpected.ToArray(), actual.ToArray(), new ComparisonComparer<T>(equalityComparison), message);
+        }
+
+        /// <summary>Assert.IsNull</summary>
+        public static void IsNull<T>(this T value, string message = "")
+        {
+            Assert.IsNull(value, message);
+        }
+
+        /// <summary>Assert.IsNotNull</summary>
+        public static void IsNotNull<T>(this T value, string message = "")
+        {
+            Assert.IsNotNull(value, message);
+        }
+
+        /// <summary>Is(true)</summary>
+        public static void IsTrue(this bool value, string message = "")
+        {
+            value.Is(true, message);
+        }
+
+        /// <summary>Is(false)</summary>
+        public static void IsFalse(this bool value, string message = "")
+        {
+            value.Is(false, message);
+        }
+
+        /// <summary>Assert.AreSame</summary>
+        public static void IsSameReferenceAs<T>(this T actual, T expected, string message = "")
+        {
+            Assert.AreSame(expected, actual, message);
+        }
+
+        /// <summary>Assert.AreNotSame</summary>
+        public static void IsNotSameReferenceAs<T>(this T actual, T notExpected, string message = "")
+        {
+            Assert.AreNotSame(notExpected, actual, message);
+        }
+
+        /// <summary>Assert.IsInstanceOfType</summary>
+        public static TExpected IsInstanceOf<TExpected>(this object value, string message = "")
+        {
+            Assert.IsInstanceOfType(value, typeof(TExpected), message);
+            return (TExpected)value;
+        }
+
+        /// <summary>Assert.IsNotInstanceOfType</summary>
+        public static void IsNotInstanceOf<TWrong>(this object value, string message = "")
+        {
+            Assert.IsNotInstanceOfType(value, typeof(TWrong), message);
+        }
+
+        /// <summary>Alternative of ExpectedExceptionAttribute(allow derived type)</summary>
+        public static T Catch<T>(Action testCode, string message = "") where T : Exception
+        {
+            var exception = ExecuteCode(testCode);
+            var headerMsg = "Failed Throws<" + typeof(T).Name + ">.";
+            var additionalMsg = string.IsNullOrEmpty(message) ? "" : ", " + message;
+
+            if (exception == null)
+            {
+                var formatted = headerMsg + " No exception was thrown" + additionalMsg;
+                throw new AssertFailedException(formatted);
+            }
+            else if (!typeof(T).IsInstanceOfType(exception))
+            {
+                var formatted = string.Format("{0} Catched:{1}{2}", headerMsg, exception.GetType().Name, additionalMsg);
+                throw new AssertFailedException(formatted);
+            }
+
+            return (T)exception;
+        }
+
+        /// <summary>Alternative of ExpectedExceptionAttribute(not allow derived type)</summary>
         public static T Throws<T>(Action testCode, string message = "") where T : Exception
         {
             var exception = Catch<T>(testCode, message);
@@ -465,9 +382,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             return (T)exception;
         }
 
-        /// <summary>
-        /// expected testCode throws ContractException
-        /// </summary>
+        /// <summary>expected testCode throws ContractException</summary>
         /// <returns>ContractException</returns>
         public static Exception ThrowsContractException(Action testCode, string message = "")
         {
@@ -485,9 +400,18 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             throw new AssertFailedException(formatted);
         }
 
-        /// <summary>
-        /// execute action and return exception when catched otherwise return null
-        /// </summary>
+        /// <summary>does not throw any exceptions</summary>
+        public static void DoesNotThrow(Action testCode, string message = "")
+        {
+            var exception = ExecuteCode(testCode);
+            if (exception != null)
+            {
+                var formatted = string.Format("Failed DoesNotThrow. Catched:{0}{1}", exception.GetType().Name, string.IsNullOrEmpty(message) ? "" : ", " + message);
+                throw new AssertFailedException(formatted);
+            }
+        }
+
+        /// <summary>execute action and return exception when catched otherwise return null</summary>
         private static Exception ExecuteCode(Action testCode)
         {
             try
@@ -501,7 +425,98 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        private static EqualInfo SequenceEqual(IEnumerable leftEnumerable, IEnumerable rightEnumarable, IEnumerable<string> names)
+        /// <summary>EqualityComparison to IComparer Converter for CollectionAssert</summary>
+        private class ComparisonComparer<T> : IComparer
+        {
+            readonly Func<T, T, bool> comparison;
+
+            public ComparisonComparer(Func<T, T, bool> comparison)
+            {
+                this.comparison = comparison;
+            }
+
+            public int Compare(object x, object y)
+            {
+                return (comparison != null)
+                    ? comparison((T)x, (T)y) ? 0 : -1
+                    : object.Equals(x, y) ? 0 : -1;
+            }
+        }
+
+        private class ReflectAccessor<T>
+        {
+            public Func<object> GetValue { get; private set; }
+            public Action<object> SetValue { get; private set; }
+
+            public ReflectAccessor(T target, string name)
+            {
+                var field = typeof(T).GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (field != null)
+                {
+                    GetValue = () => field.GetValue(target);
+                    SetValue = value => field.SetValue(target, value);
+                    return;
+                }
+
+                var prop = typeof(T).GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (prop != null)
+                {
+                    GetValue = () => prop.GetValue(target, null);
+                    SetValue = value => prop.SetValue(target, value, null);
+                    return;
+                }
+
+                throw new ArgumentException(string.Format("\"{0}\" not found : Type <{1}>", name, typeof(T).Name));
+            }
+        }
+
+        #region StructuralEqual
+
+        /// <summary>Assert by deep recursive value equality compare</summary>
+        public static void IsStructuralEqual(this object actual, object expected, string message = "")
+        {
+            message = (string.IsNullOrEmpty(message) ? "" : ", " + message);
+            if (object.ReferenceEquals(actual, expected)) return;
+
+            if (actual == null) throw new AssertFailedException("actual is null" + message);
+            if (expected == null) throw new AssertFailedException("actual is not null" + message);
+            if (actual.GetType() != expected.GetType())
+            {
+                var msg = string.Format("expected type is {0} but actual type is {1}{2}",
+                    expected.GetType().Name, actual.GetType().Name, message);
+                throw new AssertFailedException(msg);
+            }
+
+            var r = StructuralEqual(actual, expected, new[] { actual.GetType().Name }); // root type
+            if (!r.IsEquals)
+            {
+                var msg = string.Format("is not structural equal, failed at {0}, actual = {1} expected = {2}{3}",
+                    string.Join(".", r.Names), r.Left, r.Right, message);
+                throw new AssertFailedException(msg);
+            }
+        }
+
+        /// <summary>Assert by deep recursive value equality compare</summary>
+        public static void IsNotStructuralEqual(this object actual, object expected, string message = "")
+        {
+            message = (string.IsNullOrEmpty(message) ? "" : ", " + message);
+            if (object.ReferenceEquals(actual, expected)) throw new AssertFailedException("actual is same reference" + message); ;
+
+            if (actual == null) return;
+            if (expected == null) return;
+            if (actual.GetType() != expected.GetType())
+            {
+                return;
+            }
+
+            var r = StructuralEqual(actual, expected, new[] { actual.GetType().Name }); // root type
+            if (r.IsEquals)
+            {
+                throw new AssertFailedException("is structural equal" + message);
+            }
+        }
+
+        static EqualInfo SequenceEqual(IEnumerable leftEnumerable, IEnumerable rightEnumarable, IEnumerable<string> names)
         {
             var le = leftEnumerable.GetEnumerator();
             using (le as IDisposable)
@@ -517,15 +532,8 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                         object rValue = null;
                         var lMove = le.MoveNext();
                         var rMove = re.MoveNext();
-                        if (lMove)
-                        {
-                            lValue = le.Current;
-                        }
-
-                        if (rMove)
-                        {
-                            rValue = re.Current;
-                        }
+                        if (lMove) lValue = le.Current;
+                        if (rMove) rValue = re.Current;
 
                         if (lMove && rMove)
                         {
@@ -540,11 +548,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                         {
                             return new EqualInfo { IsEquals = false, Left = lValue, Right = rValue, Names = names.Concat(new[] { "[" + index + "]" }) };
                         }
-                        if (lMove == false && rMove == false)
-                        {
-                            break;
-                        }
-
+                        if (lMove == false && rMove == false) break;
                         index++;
                     }
                 }
@@ -552,25 +556,14 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             return new EqualInfo { IsEquals = true, Left = leftEnumerable, Right = rightEnumarable, Names = names };
         }
 
-        private static EqualInfo StructuralEqual(object left, object right, IEnumerable<string> names)
+        static EqualInfo StructuralEqual(object left, object right, IEnumerable<string> names)
         {
             // type and basic checks
-            if (object.ReferenceEquals(left, right))
-            {
-                return new EqualInfo { IsEquals = true, Left = left, Right = right, Names = names };
-            }
-
-            if (left == null || right == null)
-            {
-                return new EqualInfo { IsEquals = false, Left = left, Right = right, Names = names };
-            }
-
+            if (object.ReferenceEquals(left, right)) return new EqualInfo { IsEquals = true, Left = left, Right = right, Names = names };
+            if (left == null || right == null) return new EqualInfo { IsEquals = false, Left = left, Right = right, Names = names };
             var lType = left.GetType();
             var rType = right.GetType();
-            if (lType != rType)
-            {
-                return new EqualInfo { IsEquals = false, Left = left, Right = right, Names = names };
-            }
+            if (lType != rType) return new EqualInfo { IsEquals = false, Left = left, Right = right, Names = names };
 
             var type = left.GetType();
 
@@ -615,40 +608,64 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             return new EqualInfo { IsEquals = true, Left = left, Right = right, Names = names };
         }
 
-        /// <summary>
-        /// EqualityComparison to IComparer Converter for CollectionAssert
-        /// </summary>
-        private class ComparisonComparer<T> : IComparer
+        private class EqualInfo
         {
-            private readonly Func<T, T, bool> comparison;
+            public object Left;
+            public object Right;
+            public bool IsEquals;
+            public IEnumerable<string> Names;
+        }
 
-            public ComparisonComparer(Func<T, T, bool> comparison) => this.comparison = comparison;
+        #endregion
 
-            public int Compare(object x, object y) => (this.comparison != null)
-                    ? this.comparison((T)x, (T)y) ? 0 : -1
-                    : object.Equals(x, y) ? 0 : -1;
+        #region DynamicAccessor
+
+        /// <summary>to DynamicAccessor that can call private method/field/property/indexer.</summary>
+        public static dynamic AsDynamic<T>(this T target)
+        {
+            return new DynamicAccessor<T>(target);
         }
 
         private class DynamicAccessor<T> : DynamicObject
         {
-            private static readonly BindingFlags TransparentFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
             private readonly T target;
+            private static readonly BindingFlags TransparentFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
-            public DynamicAccessor(T target) => this.target = target;
+            public DynamicAccessor(T target)
+            {
+                this.target = target;
+            }
 
-            public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
+            public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
             {
                 try
                 {
-                    result = typeof(T).InvokeMember("Item", TransparentFlags | BindingFlags.GetProperty, null, this.target, indexes);
+                    typeof(T).InvokeMember("Item", TransparentFlags | BindingFlags.SetProperty, null, target, indexes.Concat(new[] { value }).ToArray());
                     return true;
                 }
                 catch (MissingMethodException) { throw new ArgumentException(string.Format("indexer not found : Type <{0}>", typeof(T).Name)); };
             }
 
+            public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
+            {
+                try
+                {
+                    result = typeof(T).InvokeMember("Item", TransparentFlags | BindingFlags.GetProperty, null, target, indexes);
+                    return true;
+                }
+                catch (MissingMethodException) { throw new ArgumentException(string.Format("indexer not found : Type <{0}>", typeof(T).Name)); };
+            }
+
+            public override bool TrySetMember(SetMemberBinder binder, object value)
+            {
+                var accessor = new ReflectAccessor<T>(target, binder.Name);
+                accessor.SetValue(value);
+                return true;
+            }
+
             public override bool TryGetMember(GetMemberBinder binder, out object result)
             {
-                var accessor = new ReflectAccessor<T>(this.target, binder.Name);
+                var accessor = new ReflectAccessor<T>(target, binder.Name);
                 result = accessor.GetValue();
                 return true;
             }
@@ -656,10 +673,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
             {
                 var csharpBinder = binder.GetType().GetInterface("Microsoft.CSharp.RuntimeBinder.ICSharpInvokeOrInvokeMemberBinder");
-                if (csharpBinder == null)
-                {
-                    throw new ArgumentException("is not csharp code");
-                }
+                if (csharpBinder == null) throw new ArgumentException("is not csharp code");
 
                 var typeArgs = (csharpBinder.GetProperty("TypeArguments").GetValue(binder, null) as IList<Type>).ToArray();
                 var parameterTypes = (binder.GetType().GetField("Cache", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(binder) as Dictionary<Type, object>)
@@ -671,32 +685,18 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                     .ToArray();
 
                 var method = MatchMethod(binder.Name, args, typeArgs, parameterTypes);
-                result = method.Invoke(this.target, args);
+                result = method.Invoke(target, args);
 
                 return true;
             }
 
-            public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
+            private Type AssignableBoundType(Type left, Type right)
             {
-                try
-                {
-                    typeof(T).InvokeMember("Item", TransparentFlags | BindingFlags.SetProperty, null, this.target, indexes.Concat(new[] { value }).ToArray());
-                    return true;
-                }
-                catch (MissingMethodException) { throw new ArgumentException(string.Format("indexer not found : Type <{0}>", typeof(T).Name)); };
-            }
-
-            public override bool TrySetMember(SetMemberBinder binder, object value)
-            {
-                var accessor = new ReflectAccessor<T>(this.target, binder.Name);
-                accessor.SetValue(value);
-                return true;
-            }
-
-            private Type AssignableBoundType(Type left, Type right) => (left == null || right == null) ? null
+                return (left == null || right == null) ? null
                     : left.IsAssignableFrom(right) ? left
                     : right.IsAssignableFrom(left) ? right
                     : null;
+            }
 
             private MethodInfo MatchMethod(string methodName, object[] args, Type[] typeArgs, Type[] parameterTypes)
             {
@@ -704,10 +704,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                 var nameMatched = typeof(T).GetMethods(TransparentFlags)
                     .Where(mi => mi.Name == methodName)
                     .ToArray();
-                if (!nameMatched.Any())
-                {
-                    throw new ArgumentException(string.Format("\"{0}\" not found : Type <{1}>", methodName, typeof(T).Name));
-                }
+                if (!nameMatched.Any()) throw new ArgumentException(string.Format("\"{0}\" not found : Type <{1}>", methodName, typeof(T).Name));
 
                 // type inference
                 var typedMethods = nameMatched
@@ -736,10 +733,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                             var typeParams = genericArguments
                                 .GroupJoin(parameterGenericTypes, x => x, x => x.Key, (_, Args) => Args)
                                 .ToArray();
-                            if (!typeParams.All(xs => xs.Any()))
-                            {
-                                return null; // types short
-                            }
+                            if (!typeParams.All(xs => xs.Any())) return null; // types short
 
                             return new
                             {
@@ -751,10 +745,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                         }
                         else
                         {
-                            if (genericArguments.Length != typeArgs.Length)
-                            {
-                                return null;
-                            }
+                            if (genericArguments.Length != typeArgs.Length) return null;
 
                             return new
                             {
@@ -776,17 +767,11 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                     )
                     .ToArray();
 
-                if (!typedMethods.Any())
-                {
-                    throw new ArgumentException(string.Format("\"{0}\" not match arguments : Type <{1}>", methodName, typeof(T).Name));
-                }
+                if (!typedMethods.Any()) throw new ArgumentException(string.Format("\"{0}\" not match arguments : Type <{1}>", methodName, typeof(T).Name));
 
                 // nongeneric
                 var nongeneric = typedMethods.Where(a => a.TypeParameters == null).ToArray();
-                if (nongeneric.Length == 1)
-                {
-                    return nongeneric[0].MethodInfo;
-                }
+                if (nongeneric.Length == 1) return nongeneric[0].MethodInfo;
 
                 // generic--
                 var lessGeneric = typedMethods
@@ -798,10 +783,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                     ? typedMethods[0]
                     : (lessGeneric.Length == 1 ? lessGeneric[0] : null);
 
-                if (generic != null)
-                {
-                    return generic.MethodInfo.MakeGenericMethod(generic.TypeParameters.Select(kvp => kvp.Value).ToArray());
-                }
+                if (generic != null) return generic.MethodInfo.MakeGenericMethod(generic.TypeParameters.Select(kvp => kvp.Value).ToArray());
 
                 // ambiguous
                 throw new ArgumentException(string.Format("\"{0}\" ambiguous arguments : Type <{1}>", methodName, typeof(T).Name));
@@ -811,26 +793,33 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             {
                 private readonly Func<TX, TX, bool> equals;
 
-                public EqualsComparer(Func<TX, TX, bool> equals) => this.equals = equals;
+                public EqualsComparer(Func<TX, TX, bool> equals)
+                {
+                    this.equals = equals;
+                }
 
-                public bool Equals(TX x, TX y) => this.equals(x, y);
+                public bool Equals(TX x, TX y)
+                {
+                    return equals(x, y);
+                }
 
-                public int GetHashCode(TX obj) => 0;
+                public int GetHashCode(TX obj)
+                {
+                    return 0;
+                }
             }
         }
 
-        private class EqualInfo
-        {
-            public bool IsEquals;
-            public object Left;
-            public IEnumerable<string> Names;
-            public object Right;
-        }
+        #endregion
+
+        #region ExpressionDumper
 
         private class ExpressionDumper<T> : ExpressionVisitor
         {
-            private ParameterExpression param;
-            private T target;
+            ParameterExpression param;
+            T target;
+
+            public Dictionary<string, object> Members { get; private set; }
 
             public ExpressionDumper(T target, ParameterExpression param)
             {
@@ -839,54 +828,77 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                 this.Members = new Dictionary<string, object>();
             }
 
-            public Dictionary<string, object> Members { get; private set; }
-
             protected override System.Linq.Expressions.Expression VisitMember(MemberExpression node)
             {
-                if (node.Expression == this.param && !this.Members.ContainsKey(node.Member.Name))
+                if (node.Expression == param && !Members.ContainsKey(node.Member.Name))
                 {
-                    var accessor = new ReflectAccessor<T>(this.target, node.Member.Name);
-                    this.Members.Add(node.Member.Name, accessor.GetValue());
+                    var accessor = new ReflectAccessor<T>(target, node.Member.Name);
+                    Members.Add(node.Member.Name, accessor.GetValue());
                 }
 
                 return base.VisitMember(node);
             }
         }
 
-        private class ReflectAccessor<T>
+        #endregion
+    }
+
+    #endregion
+
+    #region TestCase
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    public class TestCaseAttribute : Attribute
+    {
+        public object[] Parameters { get; private set; }
+
+        /// <summary>parameters provide to TestContext.Run.</summary>
+        public TestCaseAttribute(params object[] parameters)
         {
-            public ReflectAccessor(T target, string name)
-            {
-                var field = typeof(T).GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                if (field != null)
-                {
-                    this.GetValue = () => field.GetValue(target);
-                    this.SetValue = value => field.SetValue(target, value);
-                    return;
-                }
+            Parameters = parameters;
+        }
+    }
 
-                var prop = typeof(T).GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                if (prop != null)
-                {
-                    this.GetValue = () => prop.GetValue(target, null);
-                    this.SetValue = value => prop.SetValue(target, value, null);
-                    return;
-                }
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    public class TestCaseSourceAttribute : Attribute
+    {
+        public string SourceName { get; private set; }
 
-                throw new ArgumentException(string.Format("\"{0}\" not found : Type <{1}>", name, typeof(T).Name));
-            }
-
-            public Func<object> GetValue { get; private set; }
-
-            public Action<object> SetValue { get; private set; }
+        /// <summary>point out static field/property name. source must be object[][].</summary>
+        public TestCaseSourceAttribute(string sourceName)
+        {
+            SourceName = sourceName;
         }
     }
 
     public static class TestContextExtensions
     {
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        private static IEnumerable<object[]> GetParameters(Type classType, string methodName)
+        {
+            var method = classType.GetMethod(methodName);
+
+            var testCase = method
+                .GetCustomAttributes(typeof(TestCaseAttribute), false)
+                .Cast<TestCaseAttribute>()
+                .Select(x => x.Parameters);
+
+            var testCaseSource = method
+                .GetCustomAttributes(typeof(TestCaseSourceAttribute), false)
+                .Cast<TestCaseSourceAttribute>()
+                .SelectMany(x =>
+                {
+                    var p = classType.GetProperty(x.SourceName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                    var val = (p != null)
+                        ? p.GetValue(null, null)
+                        : classType.GetField(x.SourceName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic).GetValue(null);
+
+                    return ((object[])val).Cast<object[]>();
+                });
+
+            return testCase.Concat(testCaseSource);
+        }
+
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1>(this TestContext context, Action<T1> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -898,9 +910,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2>(this TestContext context, Action<T1, T2> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -913,9 +923,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3>(this TestContext context, Action<T1, T2, T3> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -929,9 +937,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4>(this TestContext context, Action<T1, T2, T3, T4> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -946,9 +952,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4, T5>(this TestContext context, Action<T1, T2, T3, T4, T5> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -964,9 +968,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4, T5, T6>(this TestContext context, Action<T1, T2, T3, T4, T5, T6> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -983,9 +985,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4, T5, T6, T7>(this TestContext context, Action<T1, T2, T3, T4, T5, T6, T7> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -1003,9 +1003,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4, T5, T6, T7, T8>(this TestContext context, Action<T1, T2, T3, T4, T5, T6, T7, T8> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -1024,9 +1022,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4, T5, T6, T7, T8, T9>(this TestContext context, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -1046,9 +1042,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(this TestContext context, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -1069,9 +1063,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(this TestContext context, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -1093,9 +1085,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(this TestContext context, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -1118,9 +1108,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(this TestContext context, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -1144,9 +1132,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(this TestContext context, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -1171,9 +1157,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(this TestContext context, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -1199,9 +1183,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
         }
 
-        /// <summary>
-        /// Run Parameterized Test marked by TestCase Attribute.
-        /// </summary>
+        /// <summary>Run Parameterized Test marked by TestCase Attribute.</summary>
         public static void Run<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(this TestContext context, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> assertion)
         {
             var type = Assembly.GetCallingAssembly().GetType(context.FullyQualifiedTestClassName);
@@ -1227,52 +1209,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                     );
             }
         }
-
-        private static IEnumerable<object[]> GetParameters(Type classType, string methodName)
-        {
-            var method = classType.GetMethod(methodName);
-
-            var testCase = method
-                .GetCustomAttributes(typeof(TestCaseAttribute), false)
-                .Cast<TestCaseAttribute>()
-                .Select(x => x.Parameters);
-
-            var testCaseSource = method
-                .GetCustomAttributes(typeof(TestCaseSourceAttribute), false)
-                .Cast<TestCaseSourceAttribute>()
-                .SelectMany(x =>
-                {
-                    var p = classType.GetProperty(x.SourceName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-                    var val = (p != null)
-                        ? p.GetValue(null, null)
-                        : classType.GetField(x.SourceName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic).GetValue(null);
-
-                    return ((object[])val).Cast<object[]>();
-                });
-
-            return testCase.Concat(testCaseSource);
-        }
     }
 
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class TestCaseAttribute : Attribute
-    {
-        /// <summary>
-        /// parameters provide to TestContext.Run.
-        /// </summary>
-        public TestCaseAttribute(params object[] parameters) => this.Parameters = parameters;
-
-        public object[] Parameters { get; private set; }
-    }
-
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class TestCaseSourceAttribute : Attribute
-    {
-        /// <summary>
-        /// point out static field/property name. source must be object[][].
-        /// </summary>
-        public TestCaseSourceAttribute(string sourceName) => this.SourceName = sourceName;
-
-        public string SourceName { get; private set; }
-    }
+    #endregion
 }

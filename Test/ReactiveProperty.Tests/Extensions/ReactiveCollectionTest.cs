@@ -21,7 +21,7 @@ namespace ReactiveProperty.Tests.Extensions
         {
             this.source = new Subject<int>();
             this.scheduler = new TestScheduler();
-            this.target = this.source.ToReactiveCollection(this.scheduler);
+            this.target = this.source.ToReactiveCollection(scheduler);
         }
 
         [TestCleanup]
@@ -33,7 +33,10 @@ namespace ReactiveProperty.Tests.Extensions
         }
 
         [TestMethod]
-        public void Create() => this.target.Count.Is(0);
+        public void Create()
+        {
+            this.target.Count.Is(0);
+        }
 
         [TestMethod]
         public void Add()

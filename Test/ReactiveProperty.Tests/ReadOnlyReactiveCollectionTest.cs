@@ -236,7 +236,10 @@ namespace ReactiveProperty.Tests
 
     class ConstructorCounter
     {
-        public ConstructorCounter(ref int count) => count++;
+        public ConstructorCounter(ref int count)
+        {
+            count++;
+        }
     }
 
     class StringHolder

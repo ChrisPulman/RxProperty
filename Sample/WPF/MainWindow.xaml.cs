@@ -15,34 +15,40 @@ namespace WPF
 
     public class MainWindowViewModel
     {
-        public ReactiveCommand NavigateBasics { get; private set; }
-        public ReactiveCommand NavigateAsync { get; private set; }
-        public ReactiveCommand NavigateValidation { get; private set; }
-        public ReactiveCommand NavigateSerialization { get; private set; }
-        public ReactiveCommand NavigateEventToReactive { get; private set; }
-        public ReactiveCommand NavigateSynchronize { get; private set; }
-        public ReactiveCommand NavigateEventToReactiveCommand { get; private set; }
-
-        public ReactiveCommand NavigateAsyncReactiveCommand { get; }
-
         public MainWindowViewModel()
         {
-            NavigateBasics = new ReactiveCommand();
+            NavigateBasics = new RxCommand();
             NavigateBasics.Subscribe(_ => new ReactivePropertyBasics().Show());
-            NavigateAsync = new ReactiveCommand();
+            NavigateAsync = new RxCommand();
             NavigateAsync.Subscribe(_ => new Asynchronous().Show());
-            NavigateValidation = new ReactiveCommand();
+            NavigateValidation = new RxCommand();
             NavigateValidation.Subscribe(_ => new Validation().Show());
-            NavigateSerialization = new ReactiveCommand();
-            NavigateSerialization.Subscribe(_ => new Serialization().Show());
-            NavigateEventToReactive = new ReactiveCommand();
+            NavigateEventToReactive = new RxCommand();
             NavigateEventToReactive.Subscribe(_ => new EventToReactiveProperty().Show());
-            NavigateSynchronize = new ReactiveCommand();
+            NavigateSynchronize = new RxCommand();
             NavigateSynchronize.Subscribe(_ => new SynchronizeObject().Show());
-            NavigateEventToReactiveCommand = new ReactiveCommand();
+            NavigateEventToReactiveCommand = new RxCommand();
             NavigateEventToReactiveCommand.Subscribe(_ => new EventToReactiveCommandWindow().Show());
-            NavigateAsyncReactiveCommand = new ReactiveCommand();
+            NavigateAsyncReactiveCommand = new RxCommand();
             NavigateAsyncReactiveCommand.Subscribe(_ => new Views.AsyncReactiveCommand().Show());
+            NavigateFilteredCollectionCommand = new RxCommand();
+            NavigateFilteredCollectionCommand.Subscribe(_ => new Views.FilteredReadOnlyObservableCollectionBasics().Show());
         }
+
+        public RxCommand NavigateAsync { get; private set; }
+
+        public RxCommand NavigateAsyncReactiveCommand { get; }
+
+        public RxCommand NavigateBasics { get; private set; }
+
+        public RxCommand NavigateEventToReactive { get; private set; }
+
+        public RxCommand NavigateEventToReactiveCommand { get; private set; }
+
+        public RxCommand NavigateFilteredCollectionCommand { get; }
+
+        public RxCommand NavigateSynchronize { get; private set; }
+
+        public RxCommand NavigateValidation { get; private set; }
     }
 }

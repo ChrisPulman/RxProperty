@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Reactive.Linq;
-using System.Windows;
-using Reactive.Bindings;
 using System.ComponentModel;
-using Reactive.Bindings.Extensions; // using namespace
+using System.Reactive.Linq;
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 
 namespace Sample.ViewModels
 {
@@ -17,12 +16,12 @@ namespace Sample.ViewModels
         {
             get
             {
-                return this.name;
+                return name;
             }
 
             set
             {
-                this.name = value;
+                name = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("Name"));
             }
         }
@@ -42,16 +41,25 @@ namespace Sample.ViewModels
             var poco = new PlainObject { Name = "Steve" };
 
             // TwoWay synchronize
-            this.TwoWay = inpc.ToReactivePropertyAsSynchronized(x => x.Name);
+            TwoWay = inpc.ToReactivePropertyAsSynchronized(x => x.Name);
 
             // OneWay synchronize
-            this.OneWay = inpc.ObserveProperty(x => x.Name).ToReactiveProperty();
+            OneWay = inpc.ObserveProperty(x => x.Name).ToReactiveProperty();
 
             // OneWayToSource synchronize
-            this.OneWayToSource = ReactiveProperty.FromObject(poco, x => x.Name);
+            OneWayToSource = ReactiveProperty.FromObject(poco, x => x.Name);
+
+            // synchronization check
+            CheckCommand = new RxCommand();
+            this.AlertMessage = CheckCommand.Select(_ =>
+                "INPC Name:" + inpc.Name + Environment.NewLine
+              + "POCO Name:" + poco.Name)
+              .ToReactiveProperty(mode: ReactivePropertyMode.None);
         }
 
         public ReactiveProperty<string> AlertMessage { get; }
+
+        public RxCommand CheckCommand { get; }
 
         public ReactiveProperty<string> OneWay { get; }
 

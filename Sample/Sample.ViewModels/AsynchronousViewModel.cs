@@ -30,12 +30,12 @@ namespace Sample.ViewModels
             var progress = new ScheduledNotifier<Tuple<long, long>>(); // current, total
 
             // skip initialValue on subscribe
-            this.SearchTerm = new ReactiveProperty<string>(mode: ReactivePropertyMode.DistinctUntilChanged);
+            SearchTerm = new ReactiveProperty<string>(mode: ReactivePropertyMode.DistinctUntilChanged);
 
             // Search asynchronous & result direct bind
             // if network error, use OnErroRetry
             // that catch exception and do action and resubscript.
-            this.SearchResults = this.SearchTerm
+            SearchResults = SearchTerm
                 .Select(async term =>
                 {
                     using (connect.Increment()) // network open
@@ -44,15 +44,15 @@ namespace Sample.ViewModels
                     }
                 })
                 .Switch() // flatten
-                .OnErrorRetry((HttpRequestException ex) => this.ProgressStatus.Value = "error occured")
+                .OnErrorRetry((HttpRequestException ex) => ProgressStatus.Value = "error occured")
                 .ToReactiveProperty();
 
             // CountChangedStatus : Increment(network open), Decrement(network close), Empty(all complete)
-            this.SearchingStatus = connect
+            SearchingStatus = connect
                 .Select(x => (x != CountChangedStatus.Empty) ? "loading..." : "complete")
                 .ToReactiveProperty();
 
-            this.ProgressStatus = progress
+            ProgressStatus = progress
                 .Select(x => string.Format("{0}/{1} {2}%", x.Item1, x.Item2, ((double)x.Item1 / x.Item2) * 100))
                 .ToReactiveProperty();
         }
@@ -69,8 +69,8 @@ namespace Sample.ViewModels
         public WikipediaModel(XElement item)
         {
             var ns = item.Name.Namespace;
-            this.Text = (string)item.Element(ns + "Text");
-            this.Description = (string)item.Element(ns + "Description");
+            Text = (string)item.Element(ns + "Text");
+            Description = (string)item.Element(ns + "Description");
         }
 
         public static async Task<WikipediaModel[]> SearchTermAsync(string term, IProgress<Tuple<long, long>> progress)
@@ -106,7 +106,7 @@ namespace Sample.ViewModels
 
         public override string ToString()
         {
-            return this.Text + ":" + this.Description;
+            return Text + ":" + Description;
         }
     }
 }

@@ -1,8 +1,66 @@
 # リリースノート
 
+## v4.0.0-pre1
+### 更新
+- System.Reactive v4.0.0-preview00001 に更新
+
+### 変更
+- ReactiveProperty の internal なコンストラクタを public に変更しました
+- ReadOnlyReactiveProperty の internal なコンストラクタを public に変更しました
+
+### 破壊的変更
+- SerializeHelper の削除
+- .NET Standard 1.1 から .NET Standard 1.3 に変更
+    - .NET Framework 4.5 を対応プラットフォームから外しました
+	- Windows store app を対応プラットフォームから外しました
+
+## v3.6.0
+### 破壊的変更
+- iOS向けのSetBindingメソッドをSetBindingXXXXX(対象のクラス名)に変更しました
+
+### Add
+- AsyncRxCommand#Subscribe メソッドに引数なしバージョンを追加しました
+- RxCommand#Subscribe メソッドに引数なしバージョンを追加しました
+
+## v3.5.0
+### 破壊的変更
+- ObserveEveryValueChanged拡張メソッドの名前空間をExtensionsからObjectExtensions変更しました.
+
+### 追加
+- RefreshメソッドをIFilteredReadOnlyObservableCollectionに追加しました.
+
+## v3.4.0
+### 更新
+- Rx 3.1.1に更新しました
+
+### 追加
+- DependencyObjectにObserveDependencyProperty拡張メソッドを追加しました。(UWPとWPF)
+- DependencyObjectにToReadOnlyReactiveProperty拡張メソッドを追加しました。(UWPとWPF)
+- DependencyObjectにToRReactiveProperty拡張メソッドを追加しました。(UWPとWPF)
+
+## v3.3.0
+
+- Rx 3.1.0にアップデートしました
+- UWPのビヘイビアをv2.0.0にアップデートしました
+
+## v3.2.0
+
+### 追加
+
+- iOS用に`SetBinding`メソッドを追加しました。
+
+## v3.1.0
+
+- VBのPropertySelectorのサポート
+
+## v3.0.0
+
+### 更新
+- Reactive Extensions 3.0に更新しました。
+
 ## v2.9
 ### 追加
-- AsyncReactiveCommandを追加しました。
+- AsyncRxCommandを追加しました。
 
 ## v2.8
 ### 追加
@@ -51,7 +109,7 @@
 
 ### 追加
 
-- iOS向けにUIViewにReactiveProeprty/ReactiveCommandをバインドする拡張メソッドを追加しました
+- iOS向けにUIViewにReactiveProeprty/RxCommandをバインドする拡張メソッドを追加しました
 
 ## v2.3.1
 
@@ -212,7 +270,7 @@
 
 ### 非推奨
 
-- EventToReactiveを非推奨にしました。EventToReactivePropertyかEventToReactiveCommandを使ってください。
+- EventToReactiveを非推奨にしました。EventToReactivePropertyかEventToRxCommandを使ってください。
 
 ### 変更点
 

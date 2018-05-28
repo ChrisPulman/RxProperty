@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+using System;
+
 using System.Collections.ObjectModel;
+using Android.App;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
@@ -21,16 +15,16 @@ namespace XamarinAndroid.ViewModels
 
         public ListAdapterActivityViewModel(Activity context)
         {
-            this.People = this.source.ToReadOnlyReactiveCollection();
+            this.People = source.ToReadOnlyReactiveCollection();
 
-            this.AddPersonCommand = new ReactiveCommand();
+            this.AddPersonCommand = new RxCommand();
             this.AddPersonCommand.Subscribe(_ => source.Add(new PersonViewModel(
                 this.source.Count,
                 "Person " + this.source.Count,
                 30 + this.source.Count % 10)));
         }
 
-        public ReactiveCommand AddPersonCommand { get; }
+        public RxCommand AddPersonCommand { get; }
 
         public ReadOnlyReactiveCollection<PersonViewModel> People { get; }
     }
@@ -48,8 +42,7 @@ namespace XamarinAndroid.ViewModels
             this.timer = new ReactiveTimer(TimeSpan.FromSeconds(10));
             this.timer
                 .ObserveOnUIDispatcher()
-                .Subscribe(_ =>
-                {
+                .Subscribe(_ => {
                     this.Age.Value = (int.Parse(this.Age.Value) + 1).ToString();
                 });
             this.timer.Start();

@@ -1,5 +1,5 @@
-version: 1.0.{build}
-image: Visual Studio 2017 RC
+version: 4.2.{build}
+image: Visual Studio 2017
 configuration: Release
 nuget:
   account_feed: true
