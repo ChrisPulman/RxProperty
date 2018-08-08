@@ -98,7 +98,7 @@ public class AViewModel
 {
     public ReactiveProperty<string> Name { get; }
     public ReactiveProperty<string> Memo { get; }
-    public RxCommand DoSomethingCommand { get; }
+    public ReactiveCommand DoSomethingCommand { get; }
 
     public AViewModel()
     {
@@ -112,7 +112,7 @@ public class AViewModel
                 Memo.ObserveHasErrors,
             }
             .CombineLatestValuesAreAllFalse()
-            .ToRxCommand()
+            .ToReactiveCommand()
             .WithSubscribe(() => { ... });
     }
 }

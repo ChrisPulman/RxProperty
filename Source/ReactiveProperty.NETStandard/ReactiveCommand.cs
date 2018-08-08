@@ -9,7 +9,7 @@ namespace Reactive.Bindings
     /// <summary>
     /// ReactiveCommand factory extension methods.
     /// </summary>
-    public static class RxCommandExtensions
+    public static class ReactiveCommandExtensions
     {
         /// <summary>
         /// CanExecuteChanged is called from canExecute sequence on UIDispatcherScheduler.
@@ -90,6 +90,57 @@ namespace Reactive.Bindings
             disposable = self.Subscribe(onNext);
             return self;
         }
+    }
+
+    /// <summary>
+    /// Represents ReactiveCommand&lt;object&gt;
+    /// </summary>
+    public class RxCommand : RxCommand<object>
+    {
+        /// <summary>
+        /// CanExecute is always true. When disposed CanExecute change false called on UIDispatcherScheduler.
+        /// </summary>
+        public RxCommand()
+            : base()
+        { }
+
+        /// <summary>
+        /// CanExecute is always true. When disposed CanExecute change false called on scheduler.
+        /// </summary>
+        public RxCommand(IScheduler scheduler)
+            : base(scheduler)
+        {
+        }
+
+        /// <summary>
+        /// CanExecuteChanged is called from canExecute sequence on UIDispatcherScheduler.
+        /// </summary>
+        public RxCommand(IObservable<bool> canExecuteSource, bool initialValue = true)
+            : base(canExecuteSource, initialValue)
+        {
+        }
+
+        /// <summary>
+        /// CanExecuteChanged is called from canExecute sequence on scheduler.
+        /// </summary>
+        public RxCommand(IObservable<bool> canExecuteSource, IScheduler scheduler, bool initialValue = true)
+            : base(canExecuteSource, scheduler, initialValue)
+        {
+        }
+
+        /// <summary>
+        /// Push null to subscribers.
+        /// </summary>
+        public void Execute()
+        {
+            Execute(null);
+        }
+
+        /// <summary>
+        /// Subscribe execute.
+        /// </summary>
+        public IDisposable Subscribe(Action onNext)
+            => this.Subscribe(_ => onNext());
     }
 
     /// <summary>
@@ -198,56 +249,5 @@ namespace Reactive.Bindings
         /// Subscribe execute.
         /// </summary>
         public IDisposable Subscribe(IObserver<T> observer) => Trigger.Subscribe(observer);
-    }
-
-    /// <summary>
-    /// Represents ReactiveCommand&lt;object&gt;
-    /// </summary>
-    public class RxCommand : RxCommand<object>
-    {
-        /// <summary>
-        /// CanExecute is always true. When disposed CanExecute change false called on UIDispatcherScheduler.
-        /// </summary>
-        public RxCommand()
-            : base()
-        { }
-
-        /// <summary>
-        /// CanExecute is always true. When disposed CanExecute change false called on scheduler.
-        /// </summary>
-        public RxCommand(IScheduler scheduler)
-            : base(scheduler)
-        {
-        }
-
-        /// <summary>
-        /// CanExecuteChanged is called from canExecute sequence on UIDispatcherScheduler.
-        /// </summary>
-        public RxCommand(IObservable<bool> canExecuteSource, bool initialValue = true)
-            : base(canExecuteSource, initialValue)
-        {
-        }
-
-        /// <summary>
-        /// CanExecuteChanged is called from canExecute sequence on scheduler.
-        /// </summary>
-        public RxCommand(IObservable<bool> canExecuteSource, IScheduler scheduler, bool initialValue = true)
-            : base(canExecuteSource, scheduler, initialValue)
-        {
-        }
-
-        /// <summary>
-        /// Push null to subscribers.
-        /// </summary>
-        public void Execute()
-        {
-            Execute(null);
-        }
-
-        /// <summary>
-        /// Subscribe execute.
-        /// </summary>
-        public IDisposable Subscribe(Action onNext)
-            => this.Subscribe(_ => onNext());
     }
 }

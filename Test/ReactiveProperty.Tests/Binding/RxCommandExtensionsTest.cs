@@ -2,26 +2,29 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Reactive.Bindings;
 using Reactive.Bindings.Binding;
-
-using System;
-
+using Reactive.Bindings.Extensions;
+using System.Reactive;
 using System.Reactive.Linq;
 
 namespace ReactiveProperty.Tests.Binding
 {
-    public class DummyButton
-    {
-        public event EventHandler Click = delegate { };
-
-        public void OnClick()
-        {
-            this.Click(this, EventArgs.Empty);
-        }
-    }
-
     [TestClass]
-    public class ReactiveCommandExtensionsTest
+    public class RxCommandExtensionsTest
     {
+        [TestMethod]
+        public void ToEventHandlerTest()
+        {
+            var called = false;
+            var command = new RxCommand();
+            command.Subscribe(_ => called = true);
+            var b = new DummyButton();
+            b.Click += command.ToEventHandler();
+
+            called.IsFalse();
+            b.OnClick();
+            called.IsTrue();
+        }
+
         [TestMethod]
         public void ToEventHandlerDetachTest()
         {
@@ -40,19 +43,15 @@ namespace ReactiveProperty.Tests.Binding
             b.OnClick();
             counter.Is(1);
         }
+    }
 
-        [TestMethod]
-        public void ToEventHandlerTest()
+    public class DummyButton
+    {
+        public event EventHandler Click = delegate { };
+
+        public void OnClick()
         {
-            var called = false;
-            var command = new RxCommand();
-            command.Subscribe(_ => called = true);
-            var b = new DummyButton();
-            b.Click += command.ToEventHandler();
-
-            called.IsFalse();
-            b.OnClick();
-            called.IsTrue();
+            this.Click(this, EventArgs.Empty);
         }
     }
 }

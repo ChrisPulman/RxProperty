@@ -63,7 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Source\ReactiveProperty.NETStandard\ReactiveProperty.NETStandard.csproj">
-      <Project>{e3bd516b-6da1-46eb-b60a-15b170b147b0}</Project>
+      <Project>{157f0f88-34ac-4c49-971f-7027aac757ae}</Project>
       <Name>ReactiveProperty.NETStandard</Name>
     </ProjectReference>
   </ItemGroup>

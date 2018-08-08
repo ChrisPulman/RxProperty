@@ -94,6 +94,51 @@ namespace Reactive.Bindings
     }
 
     /// <summary>
+    /// Represents AsyncReactiveCommand&lt;object&gt;
+    /// </summary>
+    public class AsyncRxCommand : AsyncRxCommand<object>
+    {
+        /// <summary>
+        /// CanExecute is automatically changed when executing to false and finished to true.
+        /// </summary>
+        public AsyncRxCommand()
+            : base()
+        {
+        }
+
+        /// <summary>
+        /// CanExecute is automatically changed when executing to false and finished to true.
+        /// </summary>
+        public AsyncRxCommand(IObservable<bool> canExecuteSource)
+            : base(canExecuteSource)
+        {
+        }
+
+        /// <summary>
+        /// CanExecute is automatically changed when executing to false and finished to true. The
+        /// source is shared between other AsyncReactiveCommand.
+        /// </summary>
+        public AsyncRxCommand(IReactiveProperty<bool> sharedCanExecute)
+            : base(sharedCanExecute)
+        {
+        }
+
+        /// <summary>
+        /// Push null to subscribers.
+        /// </summary>
+        public void Execute()
+        {
+            Execute(null);
+        }
+
+        /// <summary>
+        /// Subscribe execute.
+        /// </summary>
+        public IDisposable Subscribe(Func<Task> asyncAction)
+            => this.Subscribe(async _ => await asyncAction());
+    }
+
+    /// <summary>
     /// Async version ReactiveCommand
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -248,50 +293,5 @@ namespace Reactive.Bindings
                 }
             }
         }
-    }
-
-    /// <summary>
-    /// Represents AsyncReactiveCommand&lt;object&gt;
-    /// </summary>
-    public class AsyncRxCommand : AsyncRxCommand<object>
-    {
-        /// <summary>
-        /// CanExecute is automatically changed when executing to false and finished to true.
-        /// </summary>
-        public AsyncRxCommand()
-            : base()
-        {
-        }
-
-        /// <summary>
-        /// CanExecute is automatically changed when executing to false and finished to true.
-        /// </summary>
-        public AsyncRxCommand(IObservable<bool> canExecuteSource)
-            : base(canExecuteSource)
-        {
-        }
-
-        /// <summary>
-        /// CanExecute is automatically changed when executing to false and finished to true. The
-        /// source is shared between other AsyncReactiveCommand.
-        /// </summary>
-        public AsyncRxCommand(IReactiveProperty<bool> sharedCanExecute)
-            : base(sharedCanExecute)
-        {
-        }
-
-        /// <summary>
-        /// Push null to subscribers.
-        /// </summary>
-        public void Execute()
-        {
-            Execute(null);
-        }
-
-        /// <summary>
-        /// Subscribe execute.
-        /// </summary>
-        public IDisposable Subscribe(Func<Task> asyncAction)
-            => this.Subscribe(async _ => await asyncAction());
     }
 }

@@ -1,35 +1,15 @@
 ﻿using System;
-using System.Reactive.Disposables;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Reactive.Bindings;
-
-using System;
+using System.Reactive.Disposables;
 
 namespace ReactiveProperty.Tests
 {
     [TestClass]
     public class AsyncReactiveCommandTest
     {
-        [TestMethod]
-        public void DefaultConstructor()
-        {
-            var command = new AsyncRxCommand();
-            var task1 = new TaskCompletionSource<object>();
-            var task2 = new TaskCompletionSource<object>();
-
-            command.Subscribe(_ => task1.Task);
-            command.Subscribe(_ => task2.Task);
-
-            command.Execute();
-            command.CanExecute().IsFalse();
-            task1.SetResult(null);
-            command.CanExecute().IsFalse();
-            task2.SetResult(null);
-            command.CanExecute().IsTrue();
-        }
-
         [TestMethod]
         public void DefaultUseCase()
         {
@@ -58,24 +38,6 @@ namespace ReactiveProperty.Tests
 
             command.Dispose();
             command.CanExecute().Is(false);
-        }
-
-        [TestMethod]
-        public void RemoveSubscription()
-        {
-            var command = new AsyncRxCommand();
-            var task1 = new TaskCompletionSource<object>();
-            var task2 = new TaskCompletionSource<object>();
-
-            var subscription1 = command.Subscribe(_ => task1.Task);
-            var subscription2 = command.Subscribe(_ => task2.Task);
-
-            subscription2.Dispose();
-
-            command.Execute();
-            command.CanExecute().IsFalse();
-            task1.SetResult(null);
-            command.CanExecute().IsTrue();
         }
 
         [TestMethod]
@@ -128,6 +90,43 @@ namespace ReactiveProperty.Tests
             canExecutedCounter1.Is(5);
             command2.CanExecute().IsTrue();
             canExecutedCounter1.Is(5);
+
+        }
+
+        [TestMethod]
+        public void DefaultConstructor()
+        {
+            var command = new AsyncRxCommand();
+            var task1 = new TaskCompletionSource<object>();
+            var task2 = new TaskCompletionSource<object>();
+
+            command.Subscribe(_ => task1.Task);
+            command.Subscribe(_ => task2.Task);
+
+            command.Execute();
+            command.CanExecute().IsFalse();
+            task1.SetResult(null);
+            command.CanExecute().IsFalse();
+            task2.SetResult(null);
+            command.CanExecute().IsTrue();
+        }
+
+        [TestMethod]
+        public void RemoveSubscription()
+        {
+            var command = new AsyncRxCommand();
+            var task1 = new TaskCompletionSource<object>();
+            var task2 = new TaskCompletionSource<object>();
+
+            var subscription1 = command.Subscribe(_ => task1.Task);
+            var subscription2 = command.Subscribe(_ => task2.Task);
+
+            subscription2.Dispose();
+
+            command.Execute();
+            command.CanExecute().IsFalse();
+            task1.SetResult(null);
+            command.CanExecute().IsTrue();
         }
 
         [TestMethod]
@@ -170,6 +169,25 @@ namespace ReactiveProperty.Tests
         }
 
         [TestMethod]
+        public void WithSubscribeGenericVersion()
+        {
+            var task1 = new TaskCompletionSource<object>();
+            var task2 = new TaskCompletionSource<object>();
+
+            var subscription = new CompositeDisposable();
+            var command = new AsyncRxCommand<string>()
+                .WithSubscribe(_ => task1.Task)
+                .WithSubscribe(_ => task2.Task, subscription.Add);
+
+            subscription.Dispose();
+
+            command.Execute("x");
+            command.CanExecute().IsFalse();
+            task1.SetResult(null);
+            command.CanExecute().IsTrue();
+        }
+
+        [TestMethod]
         public void WithSubscribeDisposableOverride()
         {
             var task1 = new TaskCompletionSource<object>();
@@ -198,25 +216,6 @@ namespace ReactiveProperty.Tests
             var command = new AsyncRxCommand<string>()
                 .WithSubscribe(_ => task1.Task)
                 .WithSubscribe(_ => task2.Task, out subscription);
-
-            subscription.Dispose();
-
-            command.Execute("x");
-            command.CanExecute().IsFalse();
-            task1.SetResult(null);
-            command.CanExecute().IsTrue();
-        }
-
-        [TestMethod]
-        public void WithSubscribeGenericVersion()
-        {
-            var task1 = new TaskCompletionSource<object>();
-            var task2 = new TaskCompletionSource<object>();
-
-            var subscription = new CompositeDisposable();
-            var command = new AsyncRxCommand<string>()
-                .WithSubscribe(_ => task1.Task)
-                .WithSubscribe(_ => task2.Task, subscription.Add);
 
             subscription.Dispose();
 

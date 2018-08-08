@@ -1,12 +1,21 @@
-﻿using System;
+﻿using Reactive.Bindings;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Reactive.Linq;
-using Reactive.Bindings;
+using System.Diagnostics;
+using Reactive.Bindings.Extensions;
 
 namespace Sample.ViewModels
 {
     public class EventToReactiveCommandViewModel
     {
+        public RxCommand<string> SelectFileCommand { get; }
+
+        public ReactiveProperty<string> Message { get; }
+
         public EventToReactiveCommandViewModel()
         {
             // command called, after converter
@@ -16,9 +25,5 @@ namespace Sample.ViewModels
                 .Select(x => x + " selected.")
                 .ToReactiveProperty();
         }
-
-        public ReactiveProperty<string> Message { get; }
-
-        public RxCommand<string> SelectFileCommand { get; }
     }
 }

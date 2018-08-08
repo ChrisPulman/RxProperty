@@ -89,11 +89,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "csharp5", "csharp5", "{B087
 		Snippet\csharp5\AsyncReactiveCommand.snippet = Snippet\csharp5\AsyncReactiveCommand.snippet
 		Snippet\csharp5\AsyncReactiveCommandGeneric.snippet = Snippet\csharp5\AsyncReactiveCommandGeneric.snippet
 		Snippet\csharp5\ReactiveCollection.snippet = Snippet\csharp5\ReactiveCollection.snippet
-		Snippet\csharp5\ReactiveCommand.snippet = Snippet\csharp5\ReactiveCommand.snippet
-		Snippet\csharp5\ReactiveCommandGeneric.snippet = Snippet\csharp5\ReactiveCommandGeneric.snippet
 		Snippet\csharp5\ReactiveProperty.snippet = Snippet\csharp5\ReactiveProperty.snippet
 		Snippet\csharp5\ReadOnlyReactiveCollection.snippet = Snippet\csharp5\ReadOnlyReactiveCollection.snippet
 		Snippet\csharp5\ReadOnlyReactiveProperty.snippet = Snippet\csharp5\ReadOnlyReactiveProperty.snippet
+		Snippet\csharp5\RxCommand.snippet = Snippet\csharp5\RxCommand.snippet
+		Snippet\csharp5\RxCommandGeneric.snippet = Snippet\csharp5\RxCommandGeneric.snippet
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "csharp6", "csharp6", "{66249041-95E4-4DAE-AC93-3475EBE60AF0}"
@@ -101,11 +101,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "csharp6", "csharp6", "{6624
 		Snippet\csharp6\AsyncReactiveCommand.snippet = Snippet\csharp6\AsyncReactiveCommand.snippet
 		Snippet\csharp6\AsyncReactiveCommandGeneric.snippet = Snippet\csharp6\AsyncReactiveCommandGeneric.snippet
 		Snippet\csharp6\ReactiveCollection.snippet = Snippet\csharp6\ReactiveCollection.snippet
-		Snippet\csharp6\ReactiveCommand.snippet = Snippet\csharp6\ReactiveCommand.snippet
-		Snippet\csharp6\ReactiveCommandGeneric.snippet = Snippet\csharp6\ReactiveCommandGeneric.snippet
 		Snippet\csharp6\ReactiveProperty.snippet = Snippet\csharp6\ReactiveProperty.snippet
 		Snippet\csharp6\ReadOnlyReactiveCollection.snippet = Snippet\csharp6\ReadOnlyReactiveCollection.snippet
 		Snippet\csharp6\ReadOnlyReactiveProperty.snippet = Snippet\csharp6\ReadOnlyReactiveProperty.snippet
+		Snippet\csharp6\RxCommand.snippet = Snippet\csharp6\RxCommand.snippet
+		Snippet\csharp6\RxCommandGeneric.snippet = Snippet\csharp6\RxCommandGeneric.snippet
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UWP", "Sample\UWP\UWP.csproj", "{1A284C37-BA3F-4B28-B800-7C3137E3365E}"
@@ -495,9 +495,9 @@ Global
 		{523E5506-24DF-44CA-83CC-6AA02454F150} = {592AA479-AD7F-476B-AEF8-2B0268EA3BD8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_UseGlobalSettings = True
-		BuildVersion_AssemblyInfoFilename = Source\NET40\Properties\CommonAssemblyInfo.cs
 		SolutionGuid = {A4C38E0D-3AE9-4353-BF94-EC379A093CBA}
+		BuildVersion_AssemblyInfoFilename = Source\NET40\Properties\CommonAssemblyInfo.cs
+		BuildVersion_UseGlobalSettings = True
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = ReactiveProperty.vsmdi

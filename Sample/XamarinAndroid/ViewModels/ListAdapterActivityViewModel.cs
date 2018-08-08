@@ -1,9 +1,15 @@
-﻿using System;
-
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-using System.Collections.ObjectModel;
 using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Runtime;
+using Android.Views;
+using Android.Widget;
+using System.Collections.ObjectModel;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
@@ -12,6 +18,10 @@ namespace XamarinAndroid.ViewModels
     public class ListAdapterActivityViewModel
     {
         private ObservableCollection<PersonViewModel> source = new ObservableCollection<PersonViewModel>();
+
+        public ReadOnlyReactiveCollection<PersonViewModel> People { get; }
+
+        public RxCommand AddPersonCommand { get; }
 
         public ListAdapterActivityViewModel(Activity context)
         {
@@ -23,14 +33,14 @@ namespace XamarinAndroid.ViewModels
                 "Person " + this.source.Count,
                 30 + this.source.Count % 10)));
         }
-
-        public RxCommand AddPersonCommand { get; }
-
-        public ReadOnlyReactiveCollection<PersonViewModel> People { get; }
     }
 
     public class PersonViewModel
     {
+        public ReactiveProperty<long> Id { get; }
+        public ReactiveProperty<string> Name { get; }
+        public ReactiveProperty<string> Age { get; }
+
         private ReactiveTimer timer;
 
         public PersonViewModel(long id, string name, int age)
@@ -42,16 +52,11 @@ namespace XamarinAndroid.ViewModels
             this.timer = new ReactiveTimer(TimeSpan.FromSeconds(10));
             this.timer
                 .ObserveOnUIDispatcher()
-                .Subscribe(_ => {
+                .Subscribe(_ =>
+                {
                     this.Age.Value = (int.Parse(this.Age.Value) + 1).ToString();
                 });
             this.timer.Start();
         }
-
-        public ReactiveProperty<string> Age { get; }
-
-        public ReactiveProperty<long> Id { get; }
-
-        public ReactiveProperty<string> Name { get; }
     }
 }

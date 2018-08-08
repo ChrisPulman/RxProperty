@@ -1,11 +1,14 @@
 ﻿using System;
-
-using System;
-
-using System.Reactive.Disposables;
-using Microsoft.Reactive.Testing;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Reactive.Bindings;
+using System.Reactive.Linq;
+using Microsoft.Reactive.Testing;
+using System.Reactive.Subjects;
+using System.Threading;
+using System.Reactive.Disposables;
 
 namespace ReactiveProperty.Tests
 {
@@ -114,6 +117,42 @@ namespace ReactiveProperty.Tests
         }
 
         [TestMethod]
+        public void WithSubscribeGenericVersion()
+        {
+            var testScheduler = new TestScheduler();
+            var recorder1 = testScheduler.CreateObserver<string>();
+            var recorder2 = testScheduler.CreateObserver<string>();
+            var recorder3 = testScheduler.CreateObserver<string>();
+
+            var disposable1 = new CompositeDisposable();
+            var disposable2 = new CompositeDisposable();
+            var cmd = new RxCommand<string>()
+                .WithSubscribe(x => recorder1.OnNext(x), disposable1.Add)
+                .WithSubscribe(x => recorder2.OnNext(x), disposable2.Add)
+                .WithSubscribe(x => recorder3.OnNext(x));
+
+            cmd.Execute("a");
+            testScheduler.AdvanceBy(10);
+
+            disposable1.Dispose();
+            cmd.Execute("b");
+            testScheduler.AdvanceBy(10);
+
+            disposable2.Dispose();
+            cmd.Execute("c");
+
+            recorder1.Messages.Is(
+                OnNext(0, "a"));
+            recorder2.Messages.Is(
+                OnNext(0, "a"),
+                OnNext(10, "b"));
+            recorder3.Messages.Is(
+                OnNext(0, "a"),
+                OnNext(10, "b"),
+                OnNext(20, "c"));
+        }
+
+        [TestMethod]
         public void WithSubscribeDisposableOverride()
         {
             var testScheduler = new TestScheduler();
@@ -185,40 +224,5 @@ namespace ReactiveProperty.Tests
                 OnNext(20, "c"));
         }
 
-        [TestMethod]
-        public void WithSubscribeGenericVersion()
-        {
-            var testScheduler = new TestScheduler();
-            var recorder1 = testScheduler.CreateObserver<string>();
-            var recorder2 = testScheduler.CreateObserver<string>();
-            var recorder3 = testScheduler.CreateObserver<string>();
-
-            var disposable1 = new CompositeDisposable();
-            var disposable2 = new CompositeDisposable();
-            var cmd = new RxCommand<string>()
-                .WithSubscribe(x => recorder1.OnNext(x), disposable1.Add)
-                .WithSubscribe(x => recorder2.OnNext(x), disposable2.Add)
-                .WithSubscribe(x => recorder3.OnNext(x));
-
-            cmd.Execute("a");
-            testScheduler.AdvanceBy(10);
-
-            disposable1.Dispose();
-            cmd.Execute("b");
-            testScheduler.AdvanceBy(10);
-
-            disposable2.Dispose();
-            cmd.Execute("c");
-
-            recorder1.Messages.Is(
-                OnNext(0, "a"));
-            recorder2.Messages.Is(
-                OnNext(0, "a"),
-                OnNext(10, "b"));
-            recorder3.Messages.Is(
-                OnNext(0, "a"),
-                OnNext(10, "b"),
-                OnNext(20, "c"));
-        }
     }
 }

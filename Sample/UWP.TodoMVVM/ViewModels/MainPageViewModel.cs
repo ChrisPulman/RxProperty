@@ -2,13 +2,31 @@
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Helpers;
 using System;
+using System.Linq;
+using System.Reactive.Linq;
 using UWP.TodoMVVM.Models;
 using UWP.TodoMVVM.Services;
 
 namespace UWP.TodoMVVM.ViewModels
 {
-    internal class MainPageViewModel
+    class MainPageViewModel
     {
+        private TodoManager TodoManager { get; }
+
+        private TodoService TodoService { get; }
+
+        public ReactiveProperty<TodoItemViewModel> InputTodoItem { get; } = new ReactiveProperty<TodoItemViewModel>(new TodoItemViewModel());
+
+        public RxCommand AddTodoItemCommand { get; }
+
+        public ReactiveProperty<ReadOnlyReactiveCollection<TodoItemViewModel>> TodoItems { get; }
+
+        public RxCommand ShowAllCommand { get; }
+        public RxCommand ShowActiveCommand { get; }
+        public RxCommand ShowCompletedCommand { get; }
+
+        public RxCommand ClearCompletedTodoItemCommand { get; }
+
         public MainPageViewModel(TodoManager todoManager, TodoService todoService)
         {
             this.TodoManager = todoManager;
@@ -18,7 +36,7 @@ namespace UWP.TodoMVVM.ViewModels
                 .Select(x => x.HasErrors)
                 .Switch()
                 .Select(x => !x)
-                .ToRxCommand();
+                .ToReactiveCommand();
             this.AddTodoItemCommand
                 .Select(_ => this.InputTodoItem.Value)
                 .Subscribe(x =>
@@ -35,43 +53,25 @@ namespace UWP.TodoMVVM.ViewModels
 
             this.ShowAllCommand = this.TodoManager.ObserveProperty(x => x.ViewType)
                 .Select(x => x != ViewType.All)
-                .ToRxCommand();
+                .ToReactiveCommand();
             this.ShowAllCommand.Subscribe(_ => this.TodoService.SetAllCurrentView());
 
             this.ShowActiveCommand = this.TodoManager.ObserveProperty(x => x.ViewType)
                 .Select(x => x != ViewType.Active)
-                .ToRxCommand();
+                .ToReactiveCommand();
             this.ShowActiveCommand.Subscribe(_ => this.TodoService.SetActiveCurrentView());
 
             this.ShowCompletedCommand = this.TodoManager.ObserveProperty(x => x.ViewType)
                 .Select(x => x != ViewType.Completed)
-                .ToRxCommand();
+                .ToReactiveCommand();
             this.ShowCompletedCommand.Subscribe(_ => this.TodoService.SetCompletedCurrentView());
 
             this.ClearCompletedTodoItemCommand = this.TodoManager
                 .ChangedAsObservable
                 .Select(x => x.Any(y => y.Completed))
-                .ToRxCommand();
+                .ToReactiveCommand();
             this.ClearCompletedTodoItemCommand.Subscribe(_ => this.TodoService.ClearCompletedTodoItem());
         }
-
-        public RxCommand AddTodoItemCommand { get; }
-
-        public RxCommand ClearCompletedTodoItemCommand { get; }
-
-        public ReactiveProperty<TodoItemViewModel> InputTodoItem { get; } = new ReactiveProperty<TodoItemViewModel>(new TodoItemViewModel());
-
-        public RxCommand ShowActiveCommand { get; }
-
-        public RxCommand ShowAllCommand { get; }
-
-        public RxCommand ShowCompletedCommand { get; }
-
-        public ReactiveProperty<ReadOnlyReactiveCollection<TodoItemViewModel>> TodoItems { get; }
-
-        private TodoManager TodoManager { get; }
-
-        private TodoService TodoService { get; }
 
         public void ChangeStateAll(bool completed)
         {

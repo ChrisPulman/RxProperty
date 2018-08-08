@@ -15,6 +15,17 @@ namespace WPF
 
     public class MainWindowViewModel
     {
+        public RxCommand NavigateBasics { get; private set; }
+        public RxCommand NavigateAsync { get; private set; }
+        public RxCommand NavigateValidation { get; private set; }
+        public RxCommand NavigateEventToReactive { get; private set; }
+        public RxCommand NavigateSynchronize { get; private set; }
+        public RxCommand NavigateEventToReactiveCommand { get; private set; }
+
+        public RxCommand NavigateAsyncReactiveCommand { get; }
+
+        public RxCommand NavigateFilteredCollectionCommand { get; }
+
         public MainWindowViewModel()
         {
             NavigateBasics = new RxCommand();
@@ -34,21 +45,5 @@ namespace WPF
             NavigateFilteredCollectionCommand = new RxCommand();
             NavigateFilteredCollectionCommand.Subscribe(_ => new Views.FilteredReadOnlyObservableCollectionBasics().Show());
         }
-
-        public RxCommand NavigateAsync { get; private set; }
-
-        public RxCommand NavigateAsyncReactiveCommand { get; }
-
-        public RxCommand NavigateBasics { get; private set; }
-
-        public RxCommand NavigateEventToReactive { get; private set; }
-
-        public RxCommand NavigateEventToReactiveCommand { get; private set; }
-
-        public RxCommand NavigateFilteredCollectionCommand { get; }
-
-        public RxCommand NavigateSynchronize { get; private set; }
-
-        public RxCommand NavigateValidation { get; private set; }
     }
 }

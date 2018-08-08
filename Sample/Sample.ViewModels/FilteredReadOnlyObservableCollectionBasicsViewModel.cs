@@ -1,15 +1,31 @@
-﻿using System;
+﻿using Reactive.Bindings;
+using Reactive.Bindings.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using Reactive.Bindings;
-using Reactive.Bindings.Helpers;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Sample.ViewModels
 {
     public class FilteredReadOnlyObservableCollectionBasicsViewModel : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private ObservableCollection<Person> PeopleSource { get; } = new ObservableCollection<Person>();
+
+        private bool UseRemovedFilter { get; set; }
+        private Func<Person, bool> RemovedFilter { get; } = x => x.IsRemoved;
+        private Func<Person, bool> NotRemovedFilter { get; } = x => !x.IsRemoved;
+
+        public IFilteredReadOnlyObservableCollection<Person> People { get; }
+
+        public RxCommand AddCommand { get; }
+        public RxCommand RefreshCommand { get; }
+
         public FilteredReadOnlyObservableCollectionBasicsViewModel()
         {
             this.UseRemovedFilter = false;
@@ -22,22 +38,6 @@ namespace Sample.ViewModels
             this.RefreshCommand.Subscribe(Refresh);
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public RxCommand AddCommand { get; }
-
-        public IFilteredReadOnlyObservableCollection<Person> People { get; }
-
-        public RxCommand RefreshCommand { get; }
-
-        private Func<Person, bool> NotRemovedFilter { get; } = x => !x.IsRemoved;
-
-        private ObservableCollection<Person> PeopleSource { get; } = new ObservableCollection<Person>();
-
-        private Func<Person, bool> RemovedFilter { get; } = x => x.IsRemoved;
-
-        private bool UseRemovedFilter { get; set; }
-
         private void Refresh()
         {
             this.People.Refresh(this.UseRemovedFilter ? this.NotRemovedFilter : this.RemovedFilter);
@@ -47,23 +47,7 @@ namespace Sample.ViewModels
 
     public class Person : INotifyPropertyChanged
     {
-        private bool isRemoved;
-
-        private string name = $"tanaka-{DateTime.Now}";
-
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public bool IsRemoved
-        {
-            get { return this.isRemoved; }
-            set { this.SetProperty(ref this.isRemoved, value); }
-        }
-
-        public string Name
-        {
-            get { return this.name; }
-            set { this.SetProperty(ref this.name, value); }
-        }
 
         private bool SetProperty<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
         {
@@ -73,5 +57,22 @@ namespace Sample.ViewModels
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             return true;
         }
+
+        private string name = $"tanaka-{DateTime.Now}";
+
+        public string Name
+        {
+            get { return this.name; }
+            set { this.SetProperty(ref this.name, value); }
+        }
+
+        private bool isRemoved;
+
+        public bool IsRemoved
+        {
+            get { return this.isRemoved; }
+            set { this.SetProperty(ref this.isRemoved, value); }
+        }
+
     }
 }

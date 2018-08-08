@@ -1,40 +1,21 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Reactive.Linq;
+using System.Windows;
 using Reactive.Bindings;
-using Reactive.Bindings.Extensions;
+using System.ComponentModel;
+using Reactive.Bindings.Extensions; // using namespace
 
 namespace Sample.ViewModels
 {
-    public class ObservableObject : INotifyPropertyChanged
-    {
-        private string name;
-
-        public event PropertyChangedEventHandler PropertyChanged = (_, __) => { };
-
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-
-            set
-            {
-                name = value;
-                PropertyChanged(this, new PropertyChangedEventArgs("Name"));
-            }
-        }
-    }
-
-    public class PlainObject
-    {
-        public string Name { get; set; }
-    }
-
     // Synchroinize exsiting models.
     public class SynchronizeObjectViewModel
     {
+        public ReactiveProperty<string> TwoWay { get; }
+        public ReactiveProperty<string> OneWay { get; }
+        public ReactiveProperty<string> OneWayToSource { get; }
+        public RxCommand CheckCommand { get; }
+        public ReactiveProperty<string> AlertMessage { get; }
+
         public SynchronizeObjectViewModel()
         {
             var inpc = new ObservableObject { Name = "Bill" };
@@ -51,20 +32,31 @@ namespace Sample.ViewModels
 
             // synchronization check
             CheckCommand = new RxCommand();
-            this.AlertMessage = CheckCommand.Select(_ =>
+            this.AlertMessage = CheckCommand.Select(_ => 
                 "INPC Name:" + inpc.Name + Environment.NewLine
               + "POCO Name:" + poco.Name)
               .ToReactiveProperty(mode: ReactivePropertyMode.None);
         }
+    }
 
-        public ReactiveProperty<string> AlertMessage { get; }
+    public class ObservableObject : INotifyPropertyChanged
+    {
+        private string name;
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                name = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("Name"));
+            }
+        }
 
-        public RxCommand CheckCommand { get; }
+        public event PropertyChangedEventHandler PropertyChanged = (_, __) => { };
+    }
 
-        public ReactiveProperty<string> OneWay { get; }
-
-        public ReactiveProperty<string> OneWayToSource { get; }
-
-        public ReactiveProperty<string> TwoWay { get; }
+    public class PlainObject
+    {
+        public string Name { get; set; }
     }
 }

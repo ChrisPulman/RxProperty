@@ -80,7 +80,7 @@ Reactive.Bindings.Extensions
 -> Extension Methods for interface(IObservble<T>, INotifyPropertyChanged, etc...)
 
 Reactive.Bindings.Interactivity
--> EventToReactiveProperty/EventToRxCommand - Trigger that converts UIEvent to ReactiveProperty/ICommand.
+-> EventToReactiveProperty/EventToReactiveCommand - Trigger that converts UIEvent to ReactiveProperty/ICommand.
 
 Reactive.Bindings.Notifiers
 -> ScheduledNotifier - Notify value on scheduler(use with asynchronous progress report).
@@ -202,7 +202,7 @@ See https://github.com/runceel/ReactiveProperty/blob/master/ReleaseNote.md .
 2014-04-04 ver 0.4.2.beta3
 	Add
 		Reactive.Bindings.Binding namespace. Bind to ReactiveProperty to POCO property.
-		RxCommand add ToEventHandler method.
+		ReactiveCommand add ToEventHandler method.
 
 2014-04-04 ver 0.4.2.beta2
 	Add
@@ -271,7 +271,7 @@ See https://github.com/runceel/ReactiveProperty/blob/master/ReleaseNote.md .
     Fix
         Fix bugs, WebRequestExtensions.UploadValues - values no concatenate "&"
         No crash in silverlight design view
-        No throw exception when call dispose multiple in ReactiveProperty and RxCommand
+        No throw exception when call dispose multiple in ReactiveProperty and ReactiveCommand
     Change
         ReactivePropertyMode's default changes to DistinctUntilChanged|RaiseLatestValueOnSubscribe
         (Changed:ver0.2 default behavior is DistinctUntilChanged only)
@@ -287,10 +287,10 @@ See https://github.com/runceel/ReactiveProperty/blob/master/ReleaseNote.md .
         INotifyPropertyChangedExtensions.ObserveProperty isPushCurrentValueAtFirst overload
         (Changed:default behavior is true, ver.0.1 was false)
         INotifyPropertyChangingExtensions(WPF/WP7)
-        RxCommand.Execute() overload
+        ReactiveCommand.Execute() overload
         ReactiveCollection add AddOnScheduler, ClearOnScheduler, etc...
     Change
-        RxCommand<T>.Dispose() send OnCompleted to subscribers
+        ReactiveCommand<T>.Dispose() send OnCompleted to subscribers
         ReactiveCollection remove notify on scheduler
 
 2011-10-06 ver 0.1.0.0
