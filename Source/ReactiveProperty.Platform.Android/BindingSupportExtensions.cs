@@ -1,11 +1,11 @@
-using Android.Views;
-using Reactive.Bindings.Extensions;
-using Reactive.Bindings.Internal;
-using System;
+﻿using System;
 using System.Linq.Expressions;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Android.Views;
+using Reactive.Bindings.Internal;
+using Reactive.Bindings.Extensions;
 
 namespace Reactive.Bindings
 {
@@ -36,18 +36,13 @@ namespace Reactive.Bindings
                 .Where(_ => !isUpdating)
                 .Subscribe(x => setter(self, x))
                 .AddTo(d);
-            if (updateSourceTrigger != null)
-            {
+            if (updateSourceTrigger != null) {
                 var getter = AccessorCache<TView>.LookupGet(propertySelector, out propertyName);
-                updateSourceTrigger(self).Subscribe(_ =>
-                {
+                updateSourceTrigger(self).Subscribe(_ => {
                     isUpdating = true;
-                    try
-                    {
+                    try {
                         source.Value = getter(self);
-                    }
-                    finally
-                    {
+                    } finally {
                         isUpdating = false;
                     }
                 }).AddTo(d);
@@ -128,6 +123,5 @@ namespace Reactive.Bindings
             self
                 .Where(_ => command.CanExecute())
                 .Subscribe(x => command.Execute());
-
     }
 }

@@ -1,20 +1,51 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Reactive.Bindings;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Reactive.Disposables;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Reactive.Bindings;
+
+using System;
 
 namespace ReactiveProperty.Tests
 {
     [TestClass]
     public class ReadOnlyReactivePropertySlimTest
     {
+        [TestMethod]
+        public void BehaviorSubjectTest()
+        {
+            var s = new BehaviorSubject<string>("initial value");
+            var rp = s.ToReadOnlyReactivePropertySlim();
+            rp.Value.Is("initial value");
+        }
+
+        [TestMethod]
+        public void MultiSubscribeTest()
+        {
+            var s = new Subject<string>();
+
+            var rp = s.ToReadOnlyReactivePropertySlim();
+            var buffer1 = new List<string>();
+            rp.Subscribe(buffer1.Add);
+
+            buffer1.Count.Is(1);
+            s.OnNext("Hello world");
+            buffer1.Count.Is(2);
+            buffer1.Is(default(string), "Hello world");
+
+            var buffer2 = new List<string>();
+            rp.Subscribe(buffer2.Add);
+            buffer1.Is(default(string), "Hello world");
+            buffer2.Is("Hello world");
+
+            s.OnNext("ReactiveProperty");
+            buffer1.Is(default(string), "Hello world", "ReactiveProperty");
+            buffer2.Is("Hello world", "ReactiveProperty");
+        }
+
         [TestMethod]
         public void NormalPattern()
         {
@@ -36,31 +67,6 @@ namespace ReactiveProperty.Tests
             s.OnNext("Hello");
             rp.Value.Is("Hello");
             buffer.Count.Is(2); // distinct until changed.
-        }
-
-        [TestMethod]
-        public void MultiSubscribeTest()
-        {
-            var s = new Subject<string>();
-
-            var rp = s.ToReadOnlyReactivePropertySlim();
-            var buffer1 = new List<string>();
-            rp.Subscribe(buffer1.Add);
-
-
-            buffer1.Count.Is(1);
-            s.OnNext("Hello world");
-            buffer1.Count.Is(2);
-            buffer1.Is(default(string), "Hello world");
-
-            var buffer2 = new List<string>();
-            rp.Subscribe(buffer2.Add);
-            buffer1.Is(default(string), "Hello world");
-            buffer2.Is("Hello world");
-
-            s.OnNext("ReactiveProperty");
-            buffer1.Is(default(string), "Hello world", "ReactiveProperty");
-            buffer2.Is("Hello world", "ReactiveProperty");
         }
 
         [TestMethod]
@@ -88,26 +94,17 @@ namespace ReactiveProperty.Tests
         }
 
         [TestMethod]
-        public void PropertyChangedTest()
+        public void ObservableCreateTest()
         {
-            var s = new Subject<string>();
+            var i = 0;
+            var s = Observable.Create<int>(ox => {
+                i++;
+                return Disposable.Empty;
+            });
+
+            i.Is(0);
             var rp = s.ToReadOnlyReactivePropertySlim();
-            var buffer = new List<string>();
-            rp.PropertyChanged += (_, args) =>
-            {
-                buffer.Add(args.PropertyName);
-            };
-
-            buffer.Count.Is(0);
-
-            s.OnNext("Hello");
-            buffer.Count.Is(1);
-
-            s.OnNext("Hello");
-            buffer.Count.Is(1);
-
-            s.OnNext("World");
-            buffer.Count.Is(2);
+            i.Is(1);
         }
 
         [TestMethod]
@@ -117,8 +114,7 @@ namespace ReactiveProperty.Tests
             var rp = s.ToReadOnlyReactivePropertySlim(
                 mode: ReactivePropertyMode.RaiseLatestValueOnSubscribe);
             var buffer = new List<string>();
-            rp.PropertyChanged += (_, args) =>
-            {
+            rp.PropertyChanged += (_, args) => {
                 buffer.Add(args.PropertyName);
             };
 
@@ -135,26 +131,25 @@ namespace ReactiveProperty.Tests
         }
 
         [TestMethod]
-        public void BehaviorSubjectTest()
+        public void PropertyChangedTest()
         {
-            var s = new BehaviorSubject<string>("initial value");
+            var s = new Subject<string>();
             var rp = s.ToReadOnlyReactivePropertySlim();
-            rp.Value.Is("initial value");
-        }
+            var buffer = new List<string>();
+            rp.PropertyChanged += (_, args) => {
+                buffer.Add(args.PropertyName);
+            };
 
-        [TestMethod]
-        public void ObservableCreateTest()
-        {
-            var i = 0;
-            var s = Observable.Create<int>(ox =>
-            {
-                i++;
-                return Disposable.Empty;
-            });
+            buffer.Count.Is(0);
 
-            i.Is(0);
-            var rp = s.ToReadOnlyReactivePropertySlim();
-            i.Is(1);
+            s.OnNext("Hello");
+            buffer.Count.Is(1);
+
+            s.OnNext("Hello");
+            buffer.Count.Is(1);
+
+            s.OnNext("World");
+            buffer.Count.Is(2);
         }
 
         [TestMethod]

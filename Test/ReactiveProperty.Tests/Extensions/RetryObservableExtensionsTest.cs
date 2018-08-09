@@ -1,19 +1,63 @@
-﻿using Reactive.Bindings.Extensions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using Reactive.Bindings;
-using Microsoft.Reactive.Testing;
+﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Net;
+using Microsoft.Reactive.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Reactive.Bindings.Extensions;
+
+using System;
 
 namespace ReactiveProperty.Tests
 {
     [TestClass()]
     public class RetryObservableExtensionsTest : ReactiveTest
     {
+        [TestMethod()]
+        public void RetryCountAndDelay()
+        {
+            var scheduler = new TestScheduler();
+
+            var ex = new Exception();
+            var source = scheduler.CreateColdObservable<int>(
+                OnNext(0, 1),
+                OnNext(0, 2),
+                OnError<int>(0, ex));
+
+            var called = 0;
+            var retryRecorder = scheduler.CreateObserver<int>();
+            source.Retry(3).Subscribe(retryRecorder);
+            var onErrorRecorder = scheduler.CreateObserver<int>();
+            source.OnErrorRetry((Exception e) => { ++called; },
+                    3, TimeSpan.FromSeconds(3), scheduler)
+                .Subscribe(onErrorRecorder);
+
+            scheduler.Start();
+
+            retryRecorder.Messages.Is(
+                OnNext(1, 1),
+                OnNext(1, 2),
+                // error
+                OnNext(2, 1),
+                OnNext(2, 2),
+                // error
+                OnNext(3, 1),
+                OnNext(3, 2),
+                OnError<int>(3, ex));
+
+            onErrorRecorder.Messages.Is(
+                OnNext(1, 1),
+                OnNext(1, 2),
+                // error
+                OnNext(TimeSpan.FromSeconds(3).Ticks + 2, 1),
+                OnNext(TimeSpan.FromSeconds(3).Ticks + 2, 2),
+                // error
+                OnNext(TimeSpan.FromSeconds(6).Ticks + 3, 1),
+                OnNext(TimeSpan.FromSeconds(6).Ticks + 3, 2),
+                OnError<int>(TimeSpan.FromSeconds(6).Ticks + 3, ex));
+
+            called.Is(3);
+        }
+
         [TestMethod()]
         public void SameAsRetry_OnCompleted()
         {
@@ -71,52 +115,6 @@ namespace ReactiveProperty.Tests
 
             onErrorRecorder.Messages.Is(retryRecorder.Messages);
             called.Is(2);
-        }
-
-        [TestMethod()]
-        public void RetryCountAndDelay()
-        {
-            var scheduler = new TestScheduler();
-
-            var ex = new Exception();
-            var source = scheduler.CreateColdObservable<int>(
-                OnNext(0, 1),
-                OnNext(0, 2),
-                OnError<int>(0, ex));
-
-            var called = 0;
-            var retryRecorder = scheduler.CreateObserver<int>();
-            source.Retry(3).Subscribe(retryRecorder);
-            var onErrorRecorder = scheduler.CreateObserver<int>();
-            source.OnErrorRetry((Exception e) => { ++called; },
-                    3, TimeSpan.FromSeconds(3), scheduler)
-                .Subscribe(onErrorRecorder);
-
-            scheduler.Start();
-
-            retryRecorder.Messages.Is(
-                OnNext(1, 1),
-                OnNext(1, 2),
-                // error
-                OnNext(2, 1),
-                OnNext(2, 2),
-                // error
-                OnNext(3, 1),
-                OnNext(3, 2),
-                OnError<int>(3, ex));
-
-            onErrorRecorder.Messages.Is(
-                OnNext(1, 1),
-                OnNext(1, 2),
-                // error
-                OnNext(TimeSpan.FromSeconds(3).Ticks + 2, 1),
-                OnNext(TimeSpan.FromSeconds(3).Ticks + 2, 2),
-                // error
-                OnNext(TimeSpan.FromSeconds(6).Ticks + 3, 1),
-                OnNext(TimeSpan.FromSeconds(6).Ticks + 3, 2),
-                OnError<int>(TimeSpan.FromSeconds(6).Ticks + 3, ex));
-
-            called.Is(3);
         }
     }
 }

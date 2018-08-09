@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Reactive.Linq;
-using Reactive.Bindings.Notifiers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Reactive.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Reactive.Bindings.Notifiers;
 
 namespace ReactiveProperty.Tests
 {

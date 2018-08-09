@@ -1,19 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 
+using System.Reactive.Disposables;
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using XamarinAndroid.ViewModels;
-
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-using System.Reactive.Disposables;
+using XamarinAndroid.ViewModels;
 
 namespace XamarinAndroid.Views
 {
@@ -28,19 +22,17 @@ namespace XamarinAndroid.Views
 
             var inflater = LayoutInflater.FromContext(this);
             var header = inflater.Inflate(Resource.Layout.ListAdapterHeader, null);
-            this.ListView.AddHeaderView(header);
+            ListView.AddHeaderView(header);
 
-            this.viewModel = new ListAdapterActivityViewModel(this);
+            viewModel = new ListAdapterActivityViewModel(this);
             header.FindViewById<Button>(Resource.Id.ButtonAdd)
                 .ClickAsObservable()
-                .SetCommand(this.viewModel.AddPersonCommand);
-            this.ListAdapter = this.viewModel.People
+                .SetCommand(viewModel.AddPersonCommand);
+            ListAdapter = viewModel.People
                 .ToAdapter(
                     (index, value) => inflater.Inflate(Resource.Layout.ListAdapterPersonTemplate, null),
-                    (index, value, view) =>
-                    {
-                        if (view.Tag != null)
-                        {
+                    (index, value, view) => {
+                        if (view.Tag != null) {
                             view.Tag.Dispose(); // release databinding.
                         }
 

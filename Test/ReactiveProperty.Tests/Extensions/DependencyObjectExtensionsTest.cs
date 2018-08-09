@@ -1,11 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Reactive.Bindings.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Reactive.Bindings.Extensions;
 
 namespace ReactiveProperty.Tests.Extensions
 {
@@ -27,23 +23,6 @@ namespace ReactiveProperty.Tests.Extensions
             token.Dispose();
             target.Name = "kimura";
             count.Is(1);
-        }
-
-        [TestMethod]
-        public void ToReadOnlyReactiveProperty()
-        {
-            var target = new Person();
-            target.Name = "tanaka";
-            var rp = target.ToReadOnlyReactiveProperty<string>(Person.NameProperty);
-            rp.Value.Is("tanaka");
-
-            target.Name = "kimura";
-            rp.Value.Is("kimura");
-
-            rp.Dispose();
-
-            target.Name = "ohta";
-            rp.Value.Is("kimura");
         }
 
         [TestMethod]
@@ -69,9 +48,26 @@ namespace ReactiveProperty.Tests.Extensions
             target.Name = "ohta";
             rp.Value.Is("xin9le");
         }
+
+        [TestMethod]
+        public void ToReadOnlyReactiveProperty()
+        {
+            var target = new Person();
+            target.Name = "tanaka";
+            var rp = target.ToReadOnlyReactiveProperty<string>(Person.NameProperty);
+            rp.Value.Is("tanaka");
+
+            target.Name = "kimura";
+            rp.Value.Is("kimura");
+
+            rp.Dispose();
+
+            target.Name = "ohta";
+            rp.Value.Is("kimura");
+        }
     }
 
-    class Person : DependencyObject
+    internal class Person : DependencyObject
     {
         public static readonly DependencyProperty NameProperty =
             DependencyProperty.Register("Name", typeof(string), typeof(Person), new PropertyMetadata(null));
@@ -81,6 +77,5 @@ namespace ReactiveProperty.Tests.Extensions
             get { return (string)GetValue(NameProperty); }
             set { SetValue(NameProperty, value); }
         }
-
     }
 }

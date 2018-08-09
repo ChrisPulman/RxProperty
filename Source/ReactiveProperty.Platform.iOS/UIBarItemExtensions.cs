@@ -1,11 +1,11 @@
-using Reactive.Bindings.Extensions;
-using Reactive.Bindings.Internal;
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Internal;
 using UIKit;
 
 namespace Reactive.Bindings
@@ -37,18 +37,13 @@ namespace Reactive.Bindings
                 .Where(_ => !isUpdating)
                 .Subscribe(x => setter(self, x))
                 .AddTo(d);
-            if (updateSourceTrigger != null)
-            {
+            if (updateSourceTrigger != null) {
                 var getter = AccessorCache<TView>.LookupGet(propertySelector, out propertyName);
-                updateSourceTrigger(self).Subscribe(_ =>
-                {
+                updateSourceTrigger(self).Subscribe(_ => {
                     isUpdating = true;
-                    try
-                    {
+                    try {
                         source.Value = getter(self);
-                    }
-                    finally
-                    {
+                    } finally {
                         isUpdating = false;
                     }
                 }).AddTo(d);
@@ -83,17 +78,12 @@ namespace Reactive.Bindings
                 .Where(_ => !isUpdating)
                 .Subscribe(x => setter(self, x))
                 .AddTo(d);
-            if (updateSourceTrigger != null && getter != null)
-            {
-                updateSourceTrigger(self).Subscribe(_ =>
-                {
+            if (updateSourceTrigger != null && getter != null) {
+                updateSourceTrigger(self).Subscribe(_ => {
                     isUpdating = true;
-                    try
-                    {
+                    try {
                         source.Value = getter(self);
-                    }
-                    finally
-                    {
+                    } finally {
                         isUpdating = false;
                     }
                 });
@@ -145,7 +135,6 @@ namespace Reactive.Bindings
             return d;
         }
 
-
         /// <summary>
         /// Data binding method.
         /// </summary>
@@ -169,6 +158,5 @@ namespace Reactive.Bindings
 
             return d;
         }
-
     }
 }

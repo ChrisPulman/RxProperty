@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Internals;
 
 namespace ReactiveProperty.Tests.Extensions
@@ -24,7 +23,7 @@ namespace ReactiveProperty.Tests.Extensions
             person.Name.Is("kimura");
         }
 
-        class Person
+        private class Person
         {
             public string Name { get; set; }
         }
