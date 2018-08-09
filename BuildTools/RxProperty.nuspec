@@ -19,13 +19,13 @@
         <dependency id="Microsoft.Xaml.Behaviors.Uwp.Managed" version="2.0.0" />
         <dependency id="Microsoft.NETCore.UniversalWindowsPlatform" version="6.1.7" />
         <dependency id="System.Reactive" version="4.0.0" />
-        <dependency id="NETStandard.Library" Version="2.0.3" />
+        <dependency id="NETStandard.Library" version="2.0.3" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="Microsoft.Xaml.Behaviors.Uwp.Managed" version="2.0.0" />
         <dependency id="Microsoft.NETCore.UniversalWindowsPlatform" version="6.1.7" />
         <dependency id="System.Reactive" version="4.0.0" />
-        <dependency id="NETStandard.Library" Version="2.0.3" />
+        <dependency id="NETStandard.Library" version="2.0.3" />
       </group>
     </dependencies>
     <frameworkAssemblies>
