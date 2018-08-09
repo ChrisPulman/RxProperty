@@ -9,6 +9,7 @@ before_build:
 after_build:
 - cmd: nuget pack BuildTools\RxProperty.nuspec
 build:
+  project: RxProperty.sln
   verbosity: minimal
 artifacts:
 - path: '**\RxProperty.*.nupkg'
