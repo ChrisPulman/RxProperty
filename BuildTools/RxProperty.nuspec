@@ -2,13 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>RxProperty</id>
-    <version>5.3.1</version>
+    <version>5.3.2</version>
     <title>RxProperty</title>
     <authors>ChrisPulman</authors>
     <owners>ChrisPulman</owners>
-    <licenseUrl>https://github.com/ChrisPulman/RxProperty/LICENSE.txt</licenseUrl>
+    <licenseUrl>https://github.com/ChrisPulman/RxProperty/blob/master/LICENSE.txt</licenseUrl>
     <projectUrl>https://github.com/ChrisPulman/RxProperty</projectUrl>
-    <iconUrl>https://github.com/ChrisPulman/RxProperty/Images/CP_RxPropertyIcon_100x100.png</iconUrl>
+    <iconUrl>https://github.com/ChrisPulman/RxProperty/blob/master/Images/CP_RxPropertyIcon_100x100.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>RxProperty is MVVM and Asynchronous Extensions for Reactive Extensions(System.Reactive). Target is .NET 4.6.1, .NetStandard2.0, UWP, iOS, Android 9.</description>
     <summary />
