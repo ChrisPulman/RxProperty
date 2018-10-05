@@ -234,10 +234,4 @@
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties BuildVersion_AssemblyInfoFilename="..\..\Source\NET40\Properties\CommonAssemblyInfo.cs" />
-    </VisualStudio>
-  </ProjectExtensions>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

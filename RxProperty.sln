@@ -28,9 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{A9542547-5
 	ProjectSection(SolutionItems) = preProject
 		Docs\(JPN)Session_SilverlightSquareInTokyo4.pptx = Docs\(JPN)Session_SilverlightSquareInTokyo4.pptx
 		Docs\Asset.pptx = Docs\Asset.pptx
+		..\..\ChrisPulman\OneDriveAICSolutionsLtd\OneDrive - A I C Solutions Ltd\Pictures\CP_RxPropertyIcon_100x100.png = ..\..\ChrisPulman\OneDriveAICSolutionsLtd\OneDrive - A I C Solutions Ltd\Pictures\CP_RxPropertyIcon_100x100.png
 		Docs\ReactiveProperty.chm = Docs\ReactiveProperty.chm
-		Docs\ReactivePropertyIcon_100x100.png = Docs\ReactivePropertyIcon_100x100.png
-		Docs\ReactivePropertyIcon_511x511.png = Docs\ReactivePropertyIcon_511x511.png
 		Docs\ReadMe.txt = Docs\ReadMe.txt
 	EndProjectSection
 EndProject
@@ -44,7 +43,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildTools", "BuildTools", 
 		BuildTools\RxProperty.nuspec = BuildTools\RxProperty.nuspec
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveProperty.Tests", "Test\ReactiveProperty.Tests\ReactiveProperty.Tests.csproj", "{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReactiveProperty.Tests", "Test\ReactiveProperty.Tests\ReactiveProperty.Tests.csproj", "{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.ViewModels", "Sample\Sample.ViewModels\Sample.ViewModels.csproj", "{4AA39C19-6571-4A9F-8722-2D7240D425D1}"
 EndProject
@@ -156,15 +155,16 @@ Global
 		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Debug|x86.Build.0 = Debug|Any CPU
-		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|Any CPU.ActiveCfg = Documentation|Any CPU
-		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|ARM.ActiveCfg = Documentation|Any CPU
-		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|ARM.Build.0 = Documentation|Any CPU
+		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|Any CPU.Build.0 = Debug|Any CPU
+		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|ARM.ActiveCfg = Debug|Any CPU
+		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|ARM.Build.0 = Debug|Any CPU
 		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|Mixed Platforms.Build.0 = Release|Any CPU
-		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|x64.ActiveCfg = Documentation|Any CPU
-		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|x64.Build.0 = Documentation|Any CPU
-		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|x86.ActiveCfg = Documentation|Any CPU
-		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|x86.Build.0 = Documentation|Any CPU
+		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|x64.ActiveCfg = Debug|Any CPU
+		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|x64.Build.0 = Debug|Any CPU
+		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|x86.ActiveCfg = Debug|Any CPU
+		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Documentation|x86.Build.0 = Debug|Any CPU
 		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9B3C2CF3-0AFD-4FB8-BAB1-2B7931C2AF18}.Release|ARM.ActiveCfg = Release|Any CPU
@@ -450,9 +450,9 @@ Global
 		{523E5506-24DF-44CA-83CC-6AA02454F150} = {592AA479-AD7F-476B-AEF8-2B0268EA3BD8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_UseGlobalSettings = True
-		BuildVersion_AssemblyInfoFilename = Source\NET40\Properties\CommonAssemblyInfo.cs
 		SolutionGuid = {A4C38E0D-3AE9-4353-BF94-EC379A093CBA}
+		BuildVersion_AssemblyInfoFilename = Source\NET40\Properties\CommonAssemblyInfo.cs
+		BuildVersion_UseGlobalSettings = True
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = ReactiveProperty.vsmdi

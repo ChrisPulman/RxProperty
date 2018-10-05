@@ -25,10 +25,6 @@
         <dependency id="System.Reactive" version="4.1.1" />
         <dependency id="NETStandard.Library" version="2.0.3" />
       </group>
-      <group targetFramework="MonoAndroid90">
-        <dependency id="System.Reactive" version="4.0.0" />
-        <dependency id="NETStandard.Library" version="2.0.3" />
-      </group>
     </dependencies>
     <frameworkAssemblies>
       <!-- net461 -->
@@ -50,9 +46,9 @@
 
     <!-- platform -->
     <!-- WPF NET461 -->
-    <file src="..\Binary\NET46\ReactiveProperty.NET46.dll" target="lib\net461" />
-    <file src="..\Binary\NET46\ReactiveProperty.NET46.XML" target="lib\net461" />
-    <file src="..\Binary\NET46\ReactiveProperty.NET46.pdb" target="lib\net461" />
+    <file src="..\Binary\net461\ReactiveProperty.NET46.dll" target="lib\net461" />
+    <file src="..\Binary\net461\ReactiveProperty.NET46.XML" target="lib\net461" />
+    <file src="..\Binary\net461\ReactiveProperty.NET46.pdb" target="lib\net461" />
     <file src="..\Binary\netstandard2.0\ReactiveProperty.dll" target="lib\net461" />
     <file src="..\Binary\netstandard2.0\ReactiveProperty.xml" target="lib\net461" />
     <file src="..\Binary\netstandard2.0\ReactiveProperty.pdb" target="lib\net461" />
