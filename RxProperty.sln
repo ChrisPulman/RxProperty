@@ -113,7 +113,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UWP", "Sample\UWP\UWP.cspro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UWP.TodoMVVM", "Sample\UWP.TodoMVVM\UWP.TodoMVVM.csproj", "{40AE1FF3-8B25-4659-8B0A-7886113E4246}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveProperty.Platform.NET46", "Source\ReactiveProperty.Platform.NET46\ReactiveProperty.Platform.NET46.csproj", "{883C5447-2778-43E4-8CDE-6A594B342ACD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReactiveProperty.Platform.NET46", "Source\ReactiveProperty.Platform.NET46\ReactiveProperty.Platform.NET46.csproj", "{883C5447-2778-43E4-8CDE-6A594B342ACD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveProperty.Platform.UWP", "Source\ReactiveProperty.Platform.UWP\ReactiveProperty.Platform.UWP.csproj", "{CD8F2562-E3A0-4F6D-8285-70349597ADBC}"
 EndProject
@@ -124,8 +124,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReactiveProperty.NETStandard", "Source\ReactiveProperty.NETStandard\ReactiveProperty.NETStandard.csproj", "{E3BD516B-6DA1-46EB-B60A-15B170B147B0}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ReactiveProperty.Platform.Shared", "Source\ReactiveProperty.Platform.Shared\ReactiveProperty.Platform.Shared.shproj", "{523E5506-24DF-44CA-83CC-6AA02454F150}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinAndroid", "Sample\XamarinAndroid\XamarinAndroid.csproj", "{73FB08B3-EBF3-4384-A1FB-4442BD999477}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -431,51 +429,6 @@ Global
 		{E3BD516B-6DA1-46EB-B60A-15B170B147B0}.Release|x64.Build.0 = Release|Any CPU
 		{E3BD516B-6DA1-46EB-B60A-15B170B147B0}.Release|x86.ActiveCfg = Release|Any CPU
 		{E3BD516B-6DA1-46EB-B60A-15B170B147B0}.Release|x86.Build.0 = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|ARM.Build.0 = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|ARM.Deploy.0 = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|x64.Build.0 = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|x64.Deploy.0 = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|x86.Build.0 = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Debug|x86.Deploy.0 = Debug|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|Any CPU.ActiveCfg = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|Any CPU.Build.0 = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|Any CPU.Deploy.0 = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|ARM.ActiveCfg = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|ARM.Build.0 = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|ARM.Deploy.0 = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|Mixed Platforms.ActiveCfg = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|Mixed Platforms.Build.0 = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|Mixed Platforms.Deploy.0 = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|x64.ActiveCfg = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|x64.Build.0 = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|x64.Deploy.0 = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|x86.ActiveCfg = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|x86.Build.0 = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Documentation|x86.Deploy.0 = Documentation|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|ARM.ActiveCfg = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|ARM.Build.0 = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|ARM.Deploy.0 = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|x64.ActiveCfg = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|x64.Build.0 = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|x64.Deploy.0 = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|x86.ActiveCfg = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|x86.Build.0 = Release|Any CPU
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477}.Release|x86.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -495,12 +448,11 @@ Global
 		{5894EB9D-270B-41E4-B57A-4F3A48062D20} = {6356D836-36AA-4CD9-8EB2-BF037115D329}
 		{E3BD516B-6DA1-46EB-B60A-15B170B147B0} = {592AA479-AD7F-476B-AEF8-2B0268EA3BD8}
 		{523E5506-24DF-44CA-83CC-6AA02454F150} = {592AA479-AD7F-476B-AEF8-2B0268EA3BD8}
-		{73FB08B3-EBF3-4384-A1FB-4442BD999477} = {6356D836-36AA-4CD9-8EB2-BF037115D329}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A4C38E0D-3AE9-4353-BF94-EC379A093CBA}
-		BuildVersion_AssemblyInfoFilename = Source\NET40\Properties\CommonAssemblyInfo.cs
 		BuildVersion_UseGlobalSettings = True
+		BuildVersion_AssemblyInfoFilename = Source\NET40\Properties\CommonAssemblyInfo.cs
+		SolutionGuid = {A4C38E0D-3AE9-4353-BF94-EC379A093CBA}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = ReactiveProperty.vsmdi
