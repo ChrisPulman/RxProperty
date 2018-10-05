@@ -57,8 +57,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{97EC2EDF-8B92-4DB1-B2D7-09E4124B9DE0}"
 	ProjectSection(SolutionItems) = preProject
 		Images\basics.png = Images\basics.png
-		..\..\ChrisPulman\OneDriveAICSolutionsLtd\OneDrive - A I C Solutions Ltd\Pictures\CP_Rx.ico = ..\..\ChrisPulman\OneDriveAICSolutionsLtd\OneDrive - A I C Solutions Ltd\Pictures\CP_Rx.ico
-		..\..\ChrisPulman\OneDriveAICSolutionsLtd\OneDrive - A I C Solutions Ltd\Pictures\CP_RxPropertyIcon_100x100.png = ..\..\ChrisPulman\OneDriveAICSolutionsLtd\OneDrive - A I C Solutions Ltd\Pictures\CP_RxPropertyIcon_100x100.png
+		Images\CP_Rx.ico = Images\CP_Rx.ico
+		Images\CP_RxPropertyIcon_100x100.png = Images\CP_RxPropertyIcon_100x100.png
 		Images\delay.png = Images\delay.png
 		Images\error1.png = Images\error1.png
 		Images\error2.png = Images\error2.png
@@ -450,9 +450,9 @@ Global
 		{523E5506-24DF-44CA-83CC-6AA02454F150} = {592AA479-AD7F-476B-AEF8-2B0268EA3BD8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A4C38E0D-3AE9-4353-BF94-EC379A093CBA}
-		BuildVersion_AssemblyInfoFilename = Source\NET40\Properties\CommonAssemblyInfo.cs
 		BuildVersion_UseGlobalSettings = True
+		BuildVersion_AssemblyInfoFilename = Source\NET40\Properties\CommonAssemblyInfo.cs
+		SolutionGuid = {A4C38E0D-3AE9-4353-BF94-EC379A093CBA}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = ReactiveProperty.vsmdi
