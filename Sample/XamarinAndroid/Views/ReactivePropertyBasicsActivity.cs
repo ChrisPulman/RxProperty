@@ -1,12 +1,20 @@
-﻿using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Reactive.Linq;
+
 using Android.App;
+using Android.Content;
 using Android.OS;
+using Android.Runtime;
+using Android.Views;
 using Android.Widget;
 
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Sample.ViewModels;
+using Android.Util;
 
 namespace XamarinAndroid.Views
 {
@@ -19,32 +27,33 @@ namespace XamarinAndroid.Views
         {
             base.OnCreate(bundle);
 
-            SetContentView(Resource.Layout.ReactivePropertyBasics);
+            this.SetContentView(Resource.Layout.ReactivePropertyBasics);
 
-            viewModel = new ReactivePropertyBasicsViewModel();
+            this.viewModel = new ReactivePropertyBasicsViewModel();
 
-            FindViewById<EditText>(Resource.Id.EditTextInput)
+            this.FindViewById<EditText>(Resource.Id.EditTextInput)
                 .SetBinding(
                     x => x.Text,
-                    viewModel.InputText,
+                    this.viewModel.InputText,
                     x => x.TextChangedAsObservable().ToUnit());
 
-            FindViewById<TextView>(Resource.Id.TextViewOutput)
+            this.FindViewById<TextView>(Resource.Id.TextViewOutput)
                 .SetBinding(
                     x => x.Text,
-                    viewModel.DisplayText);
+                    this.viewModel.DisplayText);
 
-            var buttonReplaceText = FindViewById<Button>(Resource.Id.ButtonReplaceText);
+            var buttonReplaceText = this.FindViewById<Button>(Resource.Id.ButtonReplaceText);
             buttonReplaceText
                 .ClickAsObservable()
-                .SetCommand(viewModel.ReplaceTextCommand);
+                .SetCommand(this.viewModel.ReplaceTextCommand);
             buttonReplaceText
                 .SetBinding(
                     x => x.Enabled,
-                    viewModel.ReplaceTextCommand
+                    this.viewModel.ReplaceTextCommand
                         .CanExecuteChangedAsObservable()
-                        .Select(_ => viewModel.ReplaceTextCommand.CanExecute())
+                        .Select(_ => this.viewModel.ReplaceTextCommand.CanExecute())
                         .ToReactiveProperty());
+            
         }
     }
 }

@@ -385,7 +385,7 @@ public class ViewModel
 }
 ```
 
-### Don't need initial validation error
+### Don't need an initial validation error
 
 In default behavior, ReactiveProperty report errors when validation logic set.
 If you don't need initial validation error, then you can skip the error.
@@ -415,6 +415,41 @@ class ViewModel
 }
 ```
 
+Or set `IgnoreInitialValidationError` flag to mode argument of constructor.
+Sample code is as below:
+
+```cs
+class ViewModel
+{
+    // Set validation attributes
+    [Required(ErrorMessage = "The name is required.")]
+    [StringLength(100, ErrorMessage = "The name length should be lower than 30.")]
+    public ReactiveProperty<string> Name { get; }
+
+    public ReactiveProperty<string> NameErrorMessage { get; }
+
+    public ViewModel()
+    {
+        // Add IgnoreInitialValidationError flag
+        Name = new ReactiveProperty<string>(mode: ReactivePropertyMode.Default | ReactivePropertyMode.IgnoreInitialValidationError)
+            .SetValidateAttribute(() => Name);
+
+        // Handling an error message
+        NameErrorMessage = Name.ObserveErrorChanged
+            .Select(x => x?.OfType<string>()?.FirstOrDefault())
+            .ToReactiveProperty();
+    }
+}
+```
+
+What's different between `Skip` and `IgnoreInitialValidationError`?
+In `IgnoreInitialValidationError` case, `ReactiveProperty` class doesn't report an error of initial value.
+In `Skip` case, it is just ignore error event.
+
+This different is important on the supported platform of `INotifyDataErrorInfo` like WPF.
+`Skip` approach will be feedbacked to UI by red border.
+`IgnoreInitialValidationError` approach is no feedback to UI.
+
 ## The mode of ReactiveProperty
 
 ReactiveProperty class call OnNext callback when Subscribe method called.
@@ -434,8 +469,10 @@ This can be set following values.
     - This doesn't call OnNext callback if same value set.
 - ReactivePropertyMode.RaiseLatestValueOnSubscribe
     - This calls OnNext callback when Subscribe method call.
-
-Default value is `ReactivePropertyMode.DistinctUntilChanged | ReactivePropertyMode.RaiseLatestValueOnSubscribe`.
+- ReactivePropertyMode.Default
+    - It is default value. It is same as `ReactivePropertyMode.DistinctUntilChanged | ReactivePropertyMode.RaiseLatestValueOnSubscribe`.
+- ReactivePropertyMode.IgnoreInigialValidationError
+    - Ignore initial validation error.
 
 If you don't need this behavior, then you can set ReactivePropertyMode.None value.
 

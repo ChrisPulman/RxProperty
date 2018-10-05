@@ -1,10 +1,6 @@
-﻿using Reactive.Bindings;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Threading.Tasks;
+using Reactive.Bindings;
 
 namespace Sample.ViewModels
 {
@@ -22,18 +18,18 @@ namespace Sample.ViewModels
 
         public AsyncReactiveCommandViewModel()
         {
-            this.HeavyProcessCommand = new AsyncRxCommand();
-            this.HeavyProcessCommand.Subscribe(HeavyWork);
+            HeavyProcessCommand = new AsyncRxCommand();
+            HeavyProcessCommand.Subscribe(HeavyWork);
 
-            this.ShareSourceCommand1 = this.ShareSource.ToAsyncReactiveCommand();
-            this.ShareSourceCommand1.Subscribe(async _ => await Task.Delay(500));
-            this.ShareSourceCommand2 = this.ShareSource.ToAsyncReactiveCommand();
-            this.ShareSourceCommand2.Subscribe(async _ => await Task.Delay(2000));
+            ShareSourceCommand1 = ShareSource.ToAsyncReactiveCommand();
+            ShareSourceCommand1.Subscribe(async _ => await Task.Delay(500));
+            ShareSourceCommand2 = ShareSource.ToAsyncReactiveCommand();
+            ShareSourceCommand2.Subscribe(async _ => await Task.Delay(2000));
         }
 
-        private static async Task HeavyWork()
+        private static Task HeavyWork()
         {
-            await Task.Delay(3000);
+            return Task.Delay(3000);
         }
     }
 }

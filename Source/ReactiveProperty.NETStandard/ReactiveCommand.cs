@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Windows.Input;
-using System.Reactive.Linq;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Windows.Input;
 
 namespace Reactive.Bindings
 {
@@ -42,13 +42,17 @@ namespace Reactive.Bindings
         {
         }
 
-        /// <summary>Push null to subscribers.</summary>
+        /// <summary>
+        /// Push null to subscribers.
+        /// </summary>
         public void Execute()
         {
             Execute(null);
         }
 
-        /// <summary>Subscribe execute.</summary>
+        /// <summary>
+        /// Subscribe execute.
+        /// </summary>
         public IDisposable Subscribe(Action onNext)
             => this.Subscribe(_ => onNext());
     }
@@ -65,9 +69,13 @@ namespace Reactive.Bindings
         public event EventHandler CanExecuteChanged;
 
         private Subject<T> Trigger { get; } = new Subject<T>();
+
         private IDisposable CanExecuteSubscription { get; }
+
         private IScheduler Scheduler { get; }
+
         private bool IsCanExecute { get; set; }
+
         private bool IsDisposed { get; set; } = false;
 
         /// <summary>
@@ -99,31 +107,43 @@ namespace Reactive.Bindings
         /// </summary>
         public RxCommand(IObservable<bool> canExecuteSource, IScheduler scheduler, bool initialValue = true)
         {
-            this.IsCanExecute = initialValue;
-            this.Scheduler = scheduler;
-            this.CanExecuteSubscription = canExecuteSource
+            IsCanExecute = initialValue;
+            Scheduler = scheduler;
+            CanExecuteSubscription = canExecuteSource
                 .DistinctUntilChanged()
                 .ObserveOn(scheduler)
-                .Subscribe(b =>
-                {
+                .Subscribe(b => {
                     IsCanExecute = b;
-                    this.CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+                    CanExecuteChanged?.Invoke(this, EventArgs.Empty);
                 });
         }
 
-        /// <summary>Return current canExecute status.</summary>
+        /// <summary>
+        /// Return current canExecute status.
+        /// </summary>
         public bool CanExecute() => IsCanExecute;
 
-        /// <summary>Return current canExecute status. parameter is ignored.</summary>
+        /// <summary>
+        /// Return current canExecute status. parameter is ignored.
+        /// </summary>
         bool ICommand.CanExecute(object parameter) => IsCanExecute;
 
-        /// <summary>Push parameter to subscribers.</summary>
-        public void Execute(T parameter) => Trigger.OnNext(parameter);
+        /// <summary>
+        /// Push parameter to subscribers.
+        /// </summary>
+        public void Execute(T parameter)
+        {
+            Trigger.OnNext(parameter);
+        }
 
-        /// <summary>Push parameter to subscribers.</summary>
-        void ICommand.Execute(object parameter) => Trigger.OnNext((T)parameter);
+        /// <summary>
+        /// Push parameter to subscribers.
+        /// </summary>
+        void ICommand.Execute(object parameter) => Execute((T)parameter);
 
-        /// <summary>Subscribe execute.</summary>
+        /// <summary>
+        /// Subscribe execute.
+        /// </summary>
         public IDisposable Subscribe(IObserver<T> observer) => Trigger.Subscribe(observer);
 
         /// <summary>
@@ -131,18 +151,18 @@ namespace Reactive.Bindings
         /// </summary>
         public void Dispose()
         {
-            if (IsDisposed) return;
+            if (IsDisposed) {
+                return;
+            }
 
             IsDisposed = true;
             Trigger.OnCompleted();
             Trigger.Dispose();
             CanExecuteSubscription.Dispose();
 
-            if (IsCanExecute)
-            {
+            if (IsCanExecute) {
                 IsCanExecute = false;
-                Scheduler.Schedule(() =>
-                {
+                Scheduler.Schedule(() => {
                     IsCanExecute = false;
                     CanExecuteChanged?.Invoke(this, EventArgs.Empty);
                 });
@@ -153,12 +173,12 @@ namespace Reactive.Bindings
     /// <summary>
     /// ReactiveCommand factory extension methods.
     /// </summary>
-    public static class ReactiveCommandExtensions
+    public static class RxCommandExtensions
     {
         /// <summary>
         /// CanExecuteChanged is called from canExecute sequence on UIDispatcherScheduler.
         /// </summary>
-        public static RxCommand ToReactiveCommand(this IObservable<bool> canExecuteSource, bool initialValue = true) => 
+        public static RxCommand ToReactiveCommand(this IObservable<bool> canExecuteSource, bool initialValue = true) =>
             new RxCommand(canExecuteSource, initialValue);
 
         /// <summary>

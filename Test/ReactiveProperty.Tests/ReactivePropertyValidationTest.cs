@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Reactive.Bindings;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections;
 using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Reactive.Bindings;
 
 namespace ReactiveProperty.Tests
 {
@@ -15,6 +15,24 @@ namespace ReactiveProperty.Tests
     public class ReactivePropertyValidationTest
     {
         private TestTarget target;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            this.target = new TestTarget();
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            this.target = null;
+        }
+
+        [TestMethod]
+        public void InitialState()
+        {
+            target.RequiredProperty.HasErrors.IsTrue();
+        }
 
         [TestMethod]
         public void AnnotationTest()
@@ -36,89 +54,6 @@ namespace ReactiveProperty.Tests
             errors.Count.Is(2);
             errors[1].Cast<string>().Is("error!");
             target.RequiredProperty.HasErrors.IsTrue();
-        }
-
-        [TestMethod]
-        public async Task AsyncValidation_FailedCase()
-        {
-            var tcs = new TaskCompletionSource<string>();
-            var rprop = new ReactiveProperty<string>().SetValidateNotifyError(_ => tcs.Task);
-
-            IEnumerable error = null;
-            rprop.ObserveErrorChanged.Subscribe(x => error = x);
-
-            rprop.HasErrors.IsFalse();
-            error.IsNull();
-
-            var errorMessage = "error occured!!";
-            rprop.Value = "dummy";  //--- push value
-            tcs.SetResult(errorMessage);    //--- validation error!
-            await Task.Yield();
-
-            rprop.HasErrors.IsTrue();
-            error.IsNotNull();
-            error.Cast<string>().Is(errorMessage);
-            rprop.GetErrors("Value").Cast<string>().Is(errorMessage);
-        }
-
-        [TestMethod]
-        public async Task AsyncValidation_SuccessCase()
-        {
-            var tcs = new TaskCompletionSource<string>();
-            var rprop = new ReactiveProperty<string>().SetValidateNotifyError(_ => tcs.Task);
-
-            IEnumerable error = null;
-            rprop.ObserveErrorChanged.Subscribe(x => error = x);
-
-            rprop.HasErrors.IsFalse();
-            error.IsNull();
-
-            rprop.Value = "dummy";  //--- push value
-            tcs.SetResult(null);    //--- validation success!
-            await Task.Yield();
-
-            rprop.HasErrors.IsFalse();
-            error.IsNull();
-        }
-
-        [TestMethod]
-        public void AsyncValidation_ThrottleTest()
-        {
-            var scheduler = new TestScheduler();
-            var rprop = new ReactiveProperty<string>()
-                            .SetValidateNotifyError(xs => {
-                                return xs
-                                        .Throttle(TimeSpan.FromSeconds(1), scheduler)
-                                        .Select(x => string.IsNullOrEmpty(x) ? "required" : null);
-                            });
-
-            IEnumerable error = null;
-            rprop.ObserveErrorChanged.Subscribe(x => error = x);
-
-            scheduler.AdvanceTo(TimeSpan.FromMilliseconds(0).Ticks);
-            rprop.Value = string.Empty;
-            rprop.HasErrors.IsFalse();
-            error.IsNull();
-
-            scheduler.AdvanceTo(TimeSpan.FromMilliseconds(300).Ticks);
-            rprop.Value = "a";
-            rprop.HasErrors.IsFalse();
-            error.IsNull();
-
-            scheduler.AdvanceTo(TimeSpan.FromMilliseconds(700).Ticks);
-            rprop.Value = "b";
-            rprop.HasErrors.IsFalse();
-            error.IsNull();
-
-            scheduler.AdvanceTo(TimeSpan.FromMilliseconds(1100).Ticks);
-            rprop.Value = string.Empty;
-            rprop.HasErrors.IsFalse();
-            error.IsNull();
-
-            scheduler.AdvanceTo(TimeSpan.FromMilliseconds(2500).Ticks);
-            rprop.HasErrors.IsTrue();
-            error.IsNotNull();
-            error.Cast<string>().Is("required");
         }
 
         [TestMethod]
@@ -146,10 +81,108 @@ namespace ReactiveProperty.Tests
             error.Cast<string>().Is("required");
         }
 
-        [TestCleanup]
-        public void Cleanup()
+        [TestMethod]
+        public void TaskTest()
         {
-            this.target = null;
+            var errors = new List<IEnumerable>();
+            target.TaskValidationTestProperty
+                .ObserveErrorChanged
+                .Where(x => x != null)
+                .Subscribe(errors.Add);
+            errors.Count.Is(1);
+            errors[0].OfType<string>().Is("required");
+
+            target.TaskValidationTestProperty.Value = "a";
+            target.TaskValidationTestProperty.HasErrors.IsFalse();
+            errors.Count.Is(1);
+
+            target.TaskValidationTestProperty.Value = null;
+            target.TaskValidationTestProperty.HasErrors.IsTrue();
+            errors.Count.Is(2);
+        }
+
+        [TestMethod]
+        public async Task AsyncValidation_SuccessCase()
+        {
+            var tcs     = new TaskCompletionSource<string>();
+            var rprop   = new ReactiveProperty<string>().SetValidateNotifyError(_ => tcs.Task);
+
+            IEnumerable error = null;
+            rprop.ObserveErrorChanged.Subscribe(x => error = x);
+            
+            rprop.HasErrors.IsFalse();
+            error.IsNull();
+
+            rprop.Value = "dummy";  //--- push value
+            tcs.SetResult(null);    //--- validation success!
+            await Task.Yield();
+
+            rprop.HasErrors.IsFalse();
+            error.IsNull();
+        }
+
+        [TestMethod]
+        public async Task AsyncValidation_FailedCase()
+        {
+            var tcs     = new TaskCompletionSource<string>();
+            var rprop   = new ReactiveProperty<string>().SetValidateNotifyError(_ => tcs.Task);
+
+            IEnumerable error = null;
+            rprop.ObserveErrorChanged.Subscribe(x => error = x);
+            
+            rprop.HasErrors.IsFalse();
+            error.IsNull();
+
+            var errorMessage    = "error occured!!";
+            rprop.Value         = "dummy";  //--- push value
+            tcs.SetResult(errorMessage);    //--- validation error!
+            await Task.Yield();
+
+            rprop.HasErrors.IsTrue();
+            error.IsNotNull();
+            error.Cast<string>().Is(errorMessage);
+            rprop.GetErrors("Value").Cast<string>().Is(errorMessage);
+        }
+
+        [TestMethod]
+        public void AsyncValidation_ThrottleTest()
+        {
+            var scheduler   = new TestScheduler();
+            var rprop       = new ReactiveProperty<string>()
+                            .SetValidateNotifyError(xs =>
+                            {
+                                return  xs
+                                        .Throttle(TimeSpan.FromSeconds(1), scheduler)
+                                        .Select(x => string.IsNullOrEmpty(x) ? "required" : null);
+                            });
+
+            IEnumerable error = null;
+            rprop.ObserveErrorChanged.Subscribe(x => error = x);
+
+            scheduler.AdvanceTo(TimeSpan.FromMilliseconds(0).Ticks);
+            rprop.Value = string.Empty;
+            rprop.HasErrors.IsFalse();
+            error.IsNull();
+
+            scheduler.AdvanceTo(TimeSpan.FromMilliseconds(300).Ticks);
+            rprop.Value = "a";
+            rprop.HasErrors.IsFalse();
+            error.IsNull();
+            
+            scheduler.AdvanceTo(TimeSpan.FromMilliseconds(700).Ticks);
+            rprop.Value = "b";
+            rprop.HasErrors.IsFalse();
+            error.IsNull();
+            
+            scheduler.AdvanceTo(TimeSpan.FromMilliseconds(1100).Ticks);
+            rprop.Value = string.Empty;
+            rprop.HasErrors.IsFalse();
+            error.IsNull();
+            
+            scheduler.AdvanceTo(TimeSpan.FromMilliseconds(2500).Ticks);
+            rprop.HasErrors.IsTrue();
+            error.IsNotNull();
+            error.Cast<string>().Is("required");
         }
 
         [TestMethod]
@@ -172,41 +205,51 @@ namespace ReactiveProperty.Tests
             errors.Last().OfType<string>().Is("error");
         }
 
-        [TestInitialize]
-        public void Initialize()
+        [TestMethod]
+        public void IgnoreInitErrorAndForceNotify()
         {
-            this.target = new TestTarget();
+            var rp = new ReactiveProperty<string>(mode: ReactivePropertyMode.Default | ReactivePropertyMode.IgnoreInitialValidationError)
+                .SetValidateNotifyError(x => string.IsNullOrEmpty(x) ? "error" : null);
+
+            rp.HasErrors.IsFalse();
+            rp.ForceNotify();
+            rp.HasErrors.IsTrue();
         }
 
         [TestMethod]
-        public void InitialState()
+        public void IgnoreInitErrorAndForceValidate()
         {
-            target.RequiredProperty.HasErrors.IsTrue();
+            var rp = new ReactiveProperty<string>(mode: ReactivePropertyMode.Default | ReactivePropertyMode.IgnoreInitialValidationError)
+                .SetValidateNotifyError(x => string.IsNullOrEmpty(x) ? "error" : null);
+
+            rp.HasErrors.IsFalse();
+            rp.ForceValidate();
+            rp.HasErrors.IsTrue();
         }
 
         [TestMethod]
-        public void TaskTest()
+        public void IgnoreInitErrorAndUpdateValue()
         {
-            var errors = new List<IEnumerable>();
-            target.TaskValidationTestProperty
-                .ObserveErrorChanged
-                .Where(x => x != null)
-                .Subscribe(errors.Add);
-            errors.Count.Is(1);
-            errors[0].OfType<string>().Is("required");
+            var rp = new ReactiveProperty<string>(mode: ReactivePropertyMode.Default | ReactivePropertyMode.IgnoreInitialValidationError)
+                .SetValidateNotifyError(x => string.IsNullOrEmpty(x) ? "error" : null);
 
-            target.TaskValidationTestProperty.Value = "a";
-            target.TaskValidationTestProperty.HasErrors.IsFalse();
-            errors.Count.Is(1);
-
-            target.TaskValidationTestProperty.Value = null;
-            target.TaskValidationTestProperty.HasErrors.IsTrue();
-            errors.Count.Is(2);
+            rp.HasErrors.IsFalse();
+            rp.Value = "";
+            rp.HasErrors.IsTrue();
         }
     }
 
-    internal class TestTarget
+
+    class TestTarget
     {
+        [Required(ErrorMessage = "error!")]
+        public ReactiveProperty<string> RequiredProperty { get; private set; }
+
+        [StringLength(5, ErrorMessage = "5over")]
+        public ReactiveProperty<string> BothProperty { get; private set; }
+
+        public ReactiveProperty<string> TaskValidationTestProperty { get; private set; }
+
         public TestTarget()
         {
             this.RequiredProperty = new ReactiveProperty<string>()
@@ -217,20 +260,14 @@ namespace ReactiveProperty.Tests
                 .SetValidateNotifyError(s => string.IsNullOrWhiteSpace(s) ? "required" : null);
 
             this.TaskValidationTestProperty = new ReactiveProperty<string>()
-                .SetValidateNotifyError(async s => {
-                    if (string.IsNullOrWhiteSpace(s)) {
+                .SetValidateNotifyError(async s =>
+                {
+                    if (string.IsNullOrWhiteSpace(s))
+                    {
                         return await Task.FromResult("required");
                     }
-                    return await Task.FromResult((string)null);
+                    return await Task.FromResult((string) null);
                 });
         }
-
-        [StringLength(5, ErrorMessage = "5over")]
-        public ReactiveProperty<string> BothProperty { get; private set; }
-
-        [Required(ErrorMessage = "error!")]
-        public ReactiveProperty<string> RequiredProperty { get; private set; }
-
-        public ReactiveProperty<string> TaskValidationTestProperty { get; private set; }
     }
 }

@@ -1,13 +1,44 @@
 ﻿using System;
-using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Reactive.Linq;
 using Reactive.Bindings.Notifiers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Reactive.Testing;
 
 namespace ReactiveProperty.Tests
 {
     [TestClass]
     public class BooleanNotifierTest : ReactiveTest
     {
+        [TestMethod]
+        public void TestInitialTrue()
+        {
+            var notifier = new BooleanNotifier(true);
+            var recorder = new TestScheduler().CreateObserver<bool>();
+            notifier.Subscribe(recorder);
+
+            notifier.Value.Is(true);
+
+            notifier.TurnOn();
+            recorder.Messages.Count.Is(0);
+
+            notifier.TurnOff();
+            notifier.Value = true;
+            notifier.Value = true;
+            notifier.Value = false;
+            notifier.TurnOn();
+            notifier.SwitchValue();
+            notifier.SwitchValue();
+
+            recorder.Messages.Is(
+                OnNext(0, false),
+                OnNext(0, true),
+                OnNext(0, true),
+                OnNext(0, false),
+                OnNext(0, true),
+                OnNext(0, false),
+                OnNext(0, true));
+        }
+
         [TestMethod]
         public void TestInitialFalse()
         {
@@ -40,36 +71,6 @@ namespace ReactiveProperty.Tests
 
             notifier.TurnOn();
             recorder.Messages.Count.Is(0);
-        }
-
-        [TestMethod]
-        public void TestInitialTrue()
-        {
-            var notifier = new BooleanNotifier(true);
-            var recorder = new TestScheduler().CreateObserver<bool>();
-            notifier.Subscribe(recorder);
-
-            notifier.Value.Is(true);
-
-            notifier.TurnOn();
-            recorder.Messages.Count.Is(0);
-
-            notifier.TurnOff();
-            notifier.Value = true;
-            notifier.Value = true;
-            notifier.Value = false;
-            notifier.TurnOn();
-            notifier.SwitchValue();
-            notifier.SwitchValue();
-
-            recorder.Messages.Is(
-                OnNext(0, false),
-                OnNext(0, true),
-                OnNext(0, true),
-                OnNext(0, false),
-                OnNext(0, true),
-                OnNext(0, false),
-                OnNext(0, true));
         }
     }
 }

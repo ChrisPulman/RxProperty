@@ -22,25 +22,31 @@ namespace Reactive.Bindings.Interactivity
     /// Converts EventArgs to object
     /// </summary>
 #if NETFX_CORE
-    [ContentProperty(Name = nameof(EventToReactiveCommand.Converters))]
+    [ContentProperty(Name = nameof(EventToRxCommand.Converters))]
 #else
-    [ContentProperty(nameof(EventToReactiveCommand.Converters))]
+    [ContentProperty(nameof(EventToRxCommand.Converters))]
 #endif
-    public class EventToReactiveCommand : TriggerAction<FrameworkElement>
+    public class EventToRxCommand : TriggerAction<FrameworkElement>
     {
         private readonly Subject<object> source = new Subject<object>();
 
         private IDisposable disposable;
 
+        /// <summary>
+        /// Gets or sets the command.
+        /// </summary>
+        /// <value>The command.</value>
         public ICommand Command
         {
             get { return (ICommand)GetValue(CommandProperty); }
             set { SetValue(CommandProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Command.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// The command property
+        /// </summary>
         public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register(nameof(EventToReactiveCommand.Command), typeof(ICommand), typeof(EventToReactiveCommand), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(EventToRxCommand.Command), typeof(ICommand), typeof(EventToRxCommand), new PropertyMetadata(null));
 
         /// <summary>
         /// Ignore EventArgs. If value is false then uses Unit.Default.
@@ -51,38 +57,39 @@ namespace Reactive.Bindings.Interactivity
         /// <summary>
         /// set and get Value converter.
         /// </summary>
-        public List<IEventToReactiveConverter> Converters { get { return this.converters; } }
+        public List<IEventToReactiveConverter> Converters { get { return converters; } }
 
-        // Using a DependencyProperty as the backing store for Converter.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// Called when [detaching].
+        /// </summary>
         protected override void OnDetaching()
         {
             base.OnDetaching();
-            this.disposable?.Dispose();
+            disposable?.Dispose();
         }
 
+        /// <summary>
+        /// Invokes the specified parameter.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
         protected override void Invoke(object parameter)
         {
-            if (this.disposable == null)
-            {
-                IObservable<object> ox = this.source;
-                foreach (var c in this.Converters)
-                {
-                    c.AssociateObject = this.AssociatedObject;
+            if (disposable == null) {
+                IObservable<object> ox = source;
+                foreach (var c in Converters) {
+                    c.AssociateObject = AssociatedObject;
                     ox = c.Convert(ox);
                 }
-                this.disposable = ox
+                disposable = ox
                     .ObserveOnUIDispatcher()
-                    .Where(_ => this.Command != null)
-                    .Subscribe(x => this.Command.Execute(x));
+                    .Where(_ => Command != null)
+                    .Subscribe(x => Command.Execute(x));
             }
 
-            if (!this.IgnoreEventArgs)
-            {
-                this.source.OnNext(parameter);
-            }
-            else
-            {
-                this.source.OnNext(Unit.Default);
+            if (!IgnoreEventArgs) {
+                source.OnNext(parameter);
+            } else {
+                source.OnNext(Unit.Default);
             }
         }
 
@@ -95,6 +102,5 @@ namespace Reactive.Bindings.Interactivity
                 return source;
             }
         }
-
     }
 }

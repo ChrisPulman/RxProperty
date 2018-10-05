@@ -12,7 +12,7 @@
 ReactiveProperty is MVVM and Asynchronous Extensions for Reactive Extensions.
 
 * ReactiveProperty - Two-way bindable IObservable, from V to VM and VM to V
-* RxCommand - Convert observable condition sequence to ICommand
+* ReactiveCommand - Convert observable condition sequence to ICommand
 * Typesafe convert INotifyPropertyChanged to ReactiveProperty
 * Event to ReactiveProperty Blend behavior
 * This means V -> VM -> M -> VM -> V completely connected in Reactive.
@@ -51,11 +51,11 @@ Install-Package ReactiveProperty
 rprop ReactiveProperty.snippet
 -> ReactiveProperty<T> PropertyName { get; private set; }
 
-rcomm RxCommand.snippet
--> RxCommand CommandName { get; private set; }
+rcomm ReactiveCommand.snippet
+-> ReactiveCommand CommandName { get; private set; }
 
-rcommg RxCommandGeneric.snippet
--> RxCommand<T> CommandName { get; private set; }
+rcommg ReactiveCommandGeneric.snippet
+-> ReactiveCommand<T> CommandName { get; private set; }
 
 rcoll ReactiveCollection.snippet
 -> ReactiveCollection<T> CollectionName { get; private set; }
@@ -67,7 +67,7 @@ rrcoll ReadOnlyReactiveCollection.snippet
 
 Reactive.Bindings
 -> ReacitveProperty - two-way bindable IObservable
--> RxCommand - declaratively notify CanExecute from inside
+-> ReactiveCommand - declaratively notify CanExecute from inside
 -> ReactiveCollection - IObservable as ObservableCollection(and operate on IScheduler)
 -> ReadOnlyReactiveCollection - IObservable as ReadOnlyObservableCollection
 -> ReactiveTimer - Schedulable and hot(stoppable/continuable) timer.

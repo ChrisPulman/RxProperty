@@ -1,9 +1,12 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Reactive.Linq;
-using Microsoft.Reactive.Testing;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.ComponentModel;
 using Reactive.Bindings.Extensions;
+using Microsoft.Reactive.Testing;
+using System.Reactive.Linq;
 
 namespace ReactiveProperty.Tests.Extensions
 {
@@ -24,6 +27,22 @@ namespace ReactiveProperty.Tests.Extensions
 
             recorder.Messages.Is(
                 OnNext(0, "aaa"),
+                OnNext(1000, "bbb"));
+        }
+
+        [TestMethod]
+        public void ObservePropertyFalse()
+        {
+            var testScheduler = new TestScheduler();
+            var recorder = testScheduler.CreateObserver<string>();
+
+            var m = new Model() { Name = "aaa" };
+            m.ObserveProperty(x => x.Name, false).Subscribe(recorder);
+
+            testScheduler.AdvanceTo(1000);
+            m.Name = "bbb";
+
+            recorder.Messages.Is(
                 OnNext(1000, "bbb"));
         }
 
@@ -74,22 +93,6 @@ namespace ReactiveProperty.Tests.Extensions
         }
 
         [TestMethod]
-        public void ObservePropertyFalse()
-        {
-            var testScheduler = new TestScheduler();
-            var recorder = testScheduler.CreateObserver<string>();
-
-            var m = new Model() { Name = "aaa" };
-            m.ObserveProperty(x => x.Name, false).Subscribe(recorder);
-
-            testScheduler.AdvanceTo(1000);
-            m.Name = "bbb";
-
-            recorder.Messages.Is(
-                OnNext(1000, "bbb"));
-        }
-
-        [TestMethod]
         public void ToReactivePropertyAsSynchronized()
         {
             var model = new Model() { Name = "homuhomu" };
@@ -131,10 +134,11 @@ namespace ReactiveProperty.Tests.Extensions
                 x => "Age:" + x,  // convert
                 x => int.Parse(x.Replace("Age:", "")), // convertBack
                 ignoreValidationErrorValue: true)
-                .SetValidateNotifyError((string x) => {
-                    int result; // no use
-                    return int.TryParse(x.Replace("Age:", ""), out result) ? null : "error";
-                });
+                .SetValidateNotifyError((string x) =>
+                    {
+                        int result; // no use
+                        return int.TryParse(x.Replace("Age:", ""), out result) ? null : "error";
+                    }); 
 
             prop.Value.Is("Age:30");
 
@@ -179,41 +183,36 @@ namespace ReactiveProperty.Tests.Extensions
             model.Point.Is(x => x.Item1 == 100 && x.Item2 == 200);
         }
 
-        private class Model : INotifyPropertyChanged
+        class Model : INotifyPropertyChanged
         {
-            private int age;
             private string name;
+            public string Name
+            {
+                get { return name; }
+                set { name = value; PropertyChanged(this, new PropertyChangedEventArgs("Name")); }
+            }
 
-            public event PropertyChangedEventHandler PropertyChanged = (_, __) => { };
-
+            private int age;
             public int Age
             {
                 get { return age; }
                 set { age = value; PropertyChanged(this, new PropertyChangedEventArgs("Age")); }
             }
 
-            public string Name
-            {
-                get { return name; }
-                set { name = value; PropertyChanged(this, new PropertyChangedEventArgs("Name")); }
-            }
+            public event PropertyChangedEventHandler PropertyChanged = (_, __) => { };
         }
 
-        private class PointModel : INotifyPropertyChanged
+        class PointModel : INotifyPropertyChanged
         {
+            public event PropertyChangedEventHandler PropertyChanged;
+
             private static readonly PropertyChangedEventArgs PointPropertyChangedEventArgs = new PropertyChangedEventArgs(nameof(Point));
 
             private Tuple<int, int> point;
 
-            public event PropertyChangedEventHandler PropertyChanged;
-
             public Tuple<int, int> Point
             {
-                get
-                {
-                    return this.point;
-                }
-
+                get { return this.point; }
                 set
                 {
                     if (this.point == value) { return; }
@@ -221,6 +220,7 @@ namespace ReactiveProperty.Tests.Extensions
                     this.PropertyChanged?.Invoke(this, PointPropertyChangedEventArgs);
                 }
             }
+
         }
     }
 }

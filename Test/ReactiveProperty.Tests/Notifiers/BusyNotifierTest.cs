@@ -1,6 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Reactive.Bindings.Notifiers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ReactiveProperty.Tests.Notifiers
 {
@@ -8,18 +12,60 @@ namespace ReactiveProperty.Tests.Notifiers
     public class BusyNotifierTest
     {
         [TestMethod]
-        public void MultipleCase()
+        public void SimpleCase()
         {
             var n = new BusyNotifier();
             var notifyPropertyChangedCounter = 0;
-            n.PropertyChanged += (_, e) => {
-                if (e.PropertyName == nameof(BusyNotifier.IsBusy)) {
+            n.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(BusyNotifier.IsBusy))
+                {
                     notifyPropertyChangedCounter++;
                 }
             };
             var observeNotifyIsBusyCounter = 0;
             var latestNotifyIsBusyValue = false;
-            n.Subscribe(x => {
+            n.Subscribe(x =>
+            {
+                observeNotifyIsBusyCounter++;
+                latestNotifyIsBusyValue = x;
+            });
+
+            notifyPropertyChangedCounter.Is(0);
+            observeNotifyIsBusyCounter.Is(1);
+            latestNotifyIsBusyValue.IsFalse();
+
+            var d = n.ProcessStart();
+
+            notifyPropertyChangedCounter.Is(1);
+            observeNotifyIsBusyCounter.Is(2);
+            latestNotifyIsBusyValue.IsTrue();
+            n.IsBusy.IsTrue();
+
+            d.Dispose();
+
+            notifyPropertyChangedCounter.Is(2);
+            observeNotifyIsBusyCounter.Is(3);
+            latestNotifyIsBusyValue.IsFalse();
+            n.IsBusy.IsFalse();
+        }
+
+        [TestMethod]
+        public void MultipleCase()
+        {
+            var n = new BusyNotifier();
+            var notifyPropertyChangedCounter = 0;
+            n.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(BusyNotifier.IsBusy))
+                {
+                    notifyPropertyChangedCounter++;
+                }
+            };
+            var observeNotifyIsBusyCounter = 0;
+            var latestNotifyIsBusyValue = false;
+            n.Subscribe(x =>
+            {
                 observeNotifyIsBusyCounter++;
                 latestNotifyIsBusyValue = x;
             });
@@ -60,7 +106,8 @@ namespace ReactiveProperty.Tests.Notifiers
 
             var observeNotifyIsBusyCounter = 0;
             var latestNotifyIsBusyValue = false;
-            n.Subscribe(x => {
+            n.Subscribe(x =>
+            {
                 observeNotifyIsBusyCounter++;
                 latestNotifyIsBusyValue = x;
             });
@@ -72,42 +119,6 @@ namespace ReactiveProperty.Tests.Notifiers
             d.Dispose();
 
             observeNotifyIsBusyCounter.Is(2);
-            latestNotifyIsBusyValue.IsFalse();
-            n.IsBusy.IsFalse();
-        }
-
-        [TestMethod]
-        public void SimpleCase()
-        {
-            var n = new BusyNotifier();
-            var notifyPropertyChangedCounter = 0;
-            n.PropertyChanged += (_, e) => {
-                if (e.PropertyName == nameof(BusyNotifier.IsBusy)) {
-                    notifyPropertyChangedCounter++;
-                }
-            };
-            var observeNotifyIsBusyCounter = 0;
-            var latestNotifyIsBusyValue = false;
-            n.Subscribe(x => {
-                observeNotifyIsBusyCounter++;
-                latestNotifyIsBusyValue = x;
-            });
-
-            notifyPropertyChangedCounter.Is(0);
-            observeNotifyIsBusyCounter.Is(1);
-            latestNotifyIsBusyValue.IsFalse();
-
-            var d = n.ProcessStart();
-
-            notifyPropertyChangedCounter.Is(1);
-            observeNotifyIsBusyCounter.Is(2);
-            latestNotifyIsBusyValue.IsTrue();
-            n.IsBusy.IsTrue();
-
-            d.Dispose();
-
-            notifyPropertyChangedCounter.Is(2);
-            observeNotifyIsBusyCounter.Is(3);
             latestNotifyIsBusyValue.IsFalse();
             n.IsBusy.IsFalse();
         }

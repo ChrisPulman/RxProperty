@@ -1,6 +1,4 @@
-﻿using Reactive.Bindings;
-using Reactive.Bindings.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,40 +6,49 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Reactive.Bindings;
+using Reactive.Bindings.Helpers;
 
 namespace Sample.ViewModels
 {
     public class FilteredReadOnlyObservableCollectionBasicsViewModel : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <returns></returns>
         public event PropertyChangedEventHandler PropertyChanged;
 
         private ObservableCollection<Person> PeopleSource { get; } = new ObservableCollection<Person>();
 
         private bool UseRemovedFilter { get; set; }
+
         private Func<Person, bool> RemovedFilter { get; } = x => x.IsRemoved;
+
         private Func<Person, bool> NotRemovedFilter { get; } = x => !x.IsRemoved;
 
         public IFilteredReadOnlyObservableCollection<Person> People { get; }
 
         public RxCommand AddCommand { get; }
+
         public RxCommand RefreshCommand { get; }
 
         public FilteredReadOnlyObservableCollectionBasicsViewModel()
         {
-            this.UseRemovedFilter = false;
-            this.People = this.PeopleSource.ToFilteredReadOnlyObservableCollection(this.NotRemovedFilter);
+            UseRemovedFilter = false;
+            People = PeopleSource.ToFilteredReadOnlyObservableCollection(NotRemovedFilter);
 
-            this.AddCommand = new RxCommand();
-            this.AddCommand.Subscribe(_ => this.PeopleSource.Add(new Person()));
+            AddCommand = new RxCommand();
+            AddCommand.Subscribe(_ => PeopleSource.Add(new Person()));
 
-            this.RefreshCommand = new RxCommand();
-            this.RefreshCommand.Subscribe(Refresh);
+            RefreshCommand = new RxCommand();
+            RefreshCommand.Subscribe(Refresh);
         }
 
         private void Refresh()
         {
-            this.People.Refresh(this.UseRemovedFilter ? this.NotRemovedFilter : this.RemovedFilter);
-            this.UseRemovedFilter = !this.UseRemovedFilter;
+            People.Refresh(UseRemovedFilter ? NotRemovedFilter : RemovedFilter);
+            UseRemovedFilter = !UseRemovedFilter;
         }
     }
 
@@ -54,7 +61,7 @@ namespace Sample.ViewModels
             if (EqualityComparer<T>.Default.Equals(field, value)) { return false; }
 
             field = value;
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             return true;
         }
 
@@ -62,17 +69,16 @@ namespace Sample.ViewModels
 
         public string Name
         {
-            get { return this.name; }
-            set { this.SetProperty(ref this.name, value); }
+            get { return name; }
+            set { SetProperty(ref name, value); }
         }
 
         private bool isRemoved;
 
         public bool IsRemoved
         {
-            get { return this.isRemoved; }
-            set { this.SetProperty(ref this.isRemoved, value); }
+            get { return isRemoved; }
+            set { SetProperty(ref isRemoved, value); }
         }
-
     }
 }

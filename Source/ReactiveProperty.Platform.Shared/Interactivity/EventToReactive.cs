@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Reactive;
-
 #if NETFX_CORE
 using Windows.UI.Xaml;
 #else
-
 using System.Windows;
 using System.Windows.Interactivity;
-
 #endif
 
 namespace Reactive.Bindings.Interactivity
 {
+    /// <summary>
+    /// Event To Reactive
+    /// </summary>
     [Obsolete("Please use EventToReactiveProperty")]
     public class EventToReactive : TriggerAction<DependencyObject>
     {
@@ -21,7 +21,9 @@ namespace Reactive.Bindings.Interactivity
         /// <param name="parameter">The parameter.</param>
         protected override void Invoke(object parameter)
         {
-            if (ReactiveProperty == null) return;
+            if (ReactiveProperty == null) {
+                return;
+            }
 
             if (IgnoreEventArgs) {
                 ((IReactiveProperty)ReactiveProperty).Value = new Unit();
@@ -32,9 +34,8 @@ namespace Reactive.Bindings.Interactivity
             }
         }
 
-        // default is false
         /// <summary>
-        /// Gets or sets a value indicating whether [ignore event arguments].
+        /// Gets or sets a value indicating whether [ignore event arguments]. default is false
         /// </summary>
         /// <value><c>true</c> if [ignore event arguments]; otherwise, <c>false</c>.</value>
         public bool IgnoreEventArgs { get; set; }

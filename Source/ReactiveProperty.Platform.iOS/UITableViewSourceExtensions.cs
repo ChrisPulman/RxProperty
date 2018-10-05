@@ -10,6 +10,9 @@ using UIKit;
 
 namespace Reactive.Bindings
 {
+    /// <summary>
+    /// UI Table View Source Extensions
+    /// </summary>
     public static class UITableViewSourceExtensions
     {
         /// <summary>
