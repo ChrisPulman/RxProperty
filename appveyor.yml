@@ -8,6 +8,7 @@ install:
   - cmd: dotnet workload install android
   - cmd: dotnet workload install ios
   - cmd: dotnet workload install tvos
+  - cmd: dotnet workload install macos
 before_build:
 - cmd: nuget restore
 after_build:
