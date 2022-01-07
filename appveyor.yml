@@ -6,6 +6,11 @@ nuget:
   project_feed: true
 before_build:
 - cmd: nuget restore
+- cmd: dotnet workload install android
+- cmd: dotnet workload install ios
+- cmd: dotnet workload install tvos
+- cmd: dotnet workload install macos
+- cmd: dotnet workload install maui
 after_build:
 - cmd: nuget pack
 build:
