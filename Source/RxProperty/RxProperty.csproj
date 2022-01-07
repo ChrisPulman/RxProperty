@@ -15,7 +15,7 @@
     <Copyright>Chris Pulman</Copyright>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <AnalysisLevel>latest</AnalysisLevel>
-    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+    <!--<ProduceReferenceAssembly>True</ProduceReferenceAssembly>-->
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Version>6.1.1</Version>
   </PropertyGroup>
