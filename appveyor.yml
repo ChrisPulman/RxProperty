@@ -1,5 +1,5 @@
-version: 5.3.{build}
-image: Visual Studio 2017
+version: 6.1.{build}
+image: Visual Studio 2022
 configuration: Release
 nuget:
   account_feed: true
@@ -7,12 +7,12 @@ nuget:
 before_build:
 - cmd: nuget restore
 after_build:
-- cmd: nuget pack BuildTools\RxProperty.nuspec
+- cmd: nuget pack
 build:
   project: RxProperty.sln
   verbosity: minimal
 artifacts:
-- path: '**\RxProperty.*.nupkg'
+- path: '**\RxProperty.nupkg'
 deploy:
 - provider: NuGet
   api_key:

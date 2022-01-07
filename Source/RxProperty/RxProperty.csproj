@@ -1,0 +1,40 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;Xamarin.TVOS10;MonoAndroid11.0;tizen40;net5.0;net6.0;net6.0-android;net6.0-ios;net6.0-tvos;net6.0-macos</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);net462;net472;uap10.0.16299</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <PackageIcon>CP_RxPropertyIcon_100x100.png</PackageIcon>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Description>A Reactive Property for use in cross platform applications based on ReactiveUI</Description>
+    <PackageProjectUrl>https://github.com/ChrisPulman/RxProperty</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ChrisPulman/RxProperty</RepositoryUrl>
+    <Authors>Chris Pulman</Authors>
+    <Copyright>Chris Pulman</Copyright>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Version>6.1.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\Images\CP_RxPropertyIcon_100x100.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup  Condition=" !$(TargetFramework.StartsWith('net5.0')) ">
+    <PackageReference Include="ReactiveUI" Version="17.*" />
+    <PackageReference Include="ReactiveUI.Fody" Version="17.*" />
+  </ItemGroup>
+
+  <ItemGroup  Condition=" $(TargetFramework.StartsWith('net5.0')) ">
+    <PackageReference Include="ReactiveUI" Version="16.*" />
+    <PackageReference Include="ReactiveUI.Fody" Version="16.*" />
+  </ItemGroup>
+
+</Project>

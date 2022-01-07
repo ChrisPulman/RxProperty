@@ -1,1 +1,0 @@
-nuget pack RxProperty.nuspec
