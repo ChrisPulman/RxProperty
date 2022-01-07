@@ -1,0 +1,50 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install .NET 5
+      uses: actions/setup-dotnet@v1.9.0
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Install .NET 6
+      uses: actions/setup-dotnet@v1.9.0
+      with:
+        dotnet-version: 6.0.x
+        include-prerelease: true
+        
+    - name: Install DotNet workloads
+      shell: bash
+      run: |
+        dotnet workload install android
+        dotnet workload install ios
+        dotnet workload install tvos
+        dotnet workload install macos
+        dotnet workload install maui
+        
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+
+    - name: NuGet Push
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_API_KEY }}
+        SOURCE_URL: https://api.nuget.org/v3/index.json
+      run: |
+        dotnet nuget push -s ${{ env.SOURCE_URL }} -k ${{ env.NUGET_AUTH_TOKEN }} **/*.nupkg
+        
