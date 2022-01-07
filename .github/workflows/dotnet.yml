@@ -55,7 +55,6 @@ jobs:
       run: dotnet restore
     - name: Build
       run: msbuild /t:build,pack /nowarn:MSB4011 /maxcpucount /p:NoPackageAnalysis=true /verbosity:minimal /p:Configuration=release RxProperty.sln
-      working-directory: source
 
     - name: NuGet Push
       env:
