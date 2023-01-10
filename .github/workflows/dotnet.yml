@@ -2,7 +2,7 @@ name: RxProperty CI-Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   build-and-release:

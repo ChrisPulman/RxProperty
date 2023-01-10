@@ -2,7 +2,7 @@ name: RxProperty CI-BuildOnly
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   ci-build-and-test:
