@@ -1,4 +1,7 @@
-﻿using System.Reactive.Concurrency;
+﻿// Copyright (c) Chris Pulman. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Runtime.Serialization;
@@ -10,22 +13,19 @@ namespace CP
     /// <summary>
     /// RxProperty.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of the property.</typeparam>
     /// <seealso cref="ReactiveUI.ReactiveObject" />
     /// <seealso cref="CP.IRxProperty&lt;T&gt;" />
     [DataContract]
     public class RxProperty<T> : ReactiveObject, IRxProperty<T>
     {
         private readonly IScheduler _scheduler;
-        private readonly CompositeDisposable CleanUp = new();
+        private readonly CompositeDisposable _CleanUp = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RxProperty{T}"/> class.
         /// </summary>
-        public RxProperty()
-        {
-            _scheduler = RxApp.TaskpoolScheduler;
-        }
+        public RxProperty() => _scheduler = RxApp.TaskpoolScheduler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RxProperty{T}"/> class.
@@ -49,9 +49,9 @@ namespace CP
         }
 
         /// <summary>
-        /// Gets a value that indicates whether the object is disposed.
+        /// Gets a value indicating whether gets a value that indicates whether the object is disposed.
         /// </summary>
-        public bool IsDisposed => CleanUp.IsDisposed;
+        public bool IsDisposed => _CleanUp.IsDisposed;
 
         /// <summary>
         /// Gets or sets the value.
@@ -84,7 +84,7 @@ namespace CP
             this.WhenAnyValue(vm => vm.Value)
             .ObserveOn(_scheduler)
             .Subscribe(observer)
-            .DisposeWith(CleanUp);
+            .DisposeWith(_CleanUp);
 
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
@@ -92,8 +92,9 @@ namespace CP
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (CleanUp?.IsDisposed == false && disposing) {
-                CleanUp?.Dispose();
+            if (_CleanUp?.IsDisposed == false && disposing)
+            {
+                _CleanUp?.Dispose();
             }
         }
     }
