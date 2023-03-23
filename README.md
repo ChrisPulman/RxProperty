@@ -1,9 +1,23 @@
 # RxProperty
 
-RxProperty provides MVVM and asynchronous support features under Reactive Extensions. Target frameworks are .net 6.0, .net 7.0, and .NET Standard 2.0.
+RxProperty provides a Observable and Getable / Setable property using ReactiveUI as a base.
+
+Target frameworks are .net 6.0, .net 7.0, and .NET Standard 2.0.
+
+## Installation
+
+Install-Package RxProperty
+
+## Usage
 
 
-RxProperty is very simple library.
+### RxProperty
 
-RxProperty doesn't provide base class by ViewModel.
-RxProperty can be used together other MVVM libraries like Prism, MVVMLight, etc...
+```csharp
+var property = new RxProperty<int>(0);
+property.Subscribe(x => Console.WriteLine(x));
+property.Value = 1;
+property.Value = 2;
+```
+
+

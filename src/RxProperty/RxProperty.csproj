@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Update="**\*.cs" DependentUpon="I%(Filename).cs" />
     <PackageReference Include="ReactiveUI" Version="18.*" />
     <PackageReference Include="ReactiveUI.Fody" Version="18.*" />
   </ItemGroup>
