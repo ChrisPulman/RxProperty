@@ -5,8 +5,8 @@ using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 
 namespace CP;
 
@@ -14,13 +14,14 @@ namespace CP;
 /// RxProperty.
 /// </summary>
 /// <typeparam name="T">The type of the property.</typeparam>
-/// <seealso cref="ReactiveUI.ReactiveObject" />
-/// <seealso cref="CP.IRxProperty&lt;T&gt;" />
+/// <seealso cref="ReactiveObject" />
+/// <seealso cref="IRxProperty&lt;T&gt;" />
 [DataContract]
 public class RxProperty<T> : ReactiveObject, IRxProperty<T>
 {
     private readonly IScheduler _scheduler;
-    private readonly CompositeDisposable _CleanUp = new();
+    private readonly CompositeDisposable _CleanUp = [];
+    private T? _value;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RxProperty{T}"/> class.
@@ -60,8 +61,12 @@ public class RxProperty<T> : ReactiveObject, IRxProperty<T>
     /// The value.
     /// </value>
     [DataMember]
-    [Reactive]
-    public T? Value { get; set; }
+    [JsonInclude]
+    public T? Value
+    {
+        get => _value;
+        set => this.RaiseAndSetIfChanged(ref _value, value);
+    }
 
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
