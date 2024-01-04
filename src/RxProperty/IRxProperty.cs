@@ -9,8 +9,8 @@ namespace CP;
 /// Reactive Property.
 /// </summary>
 /// <typeparam name="T">The type of the property.</typeparam>
-/// <seealso cref="System.IObservable&lt;T&gt;" />
-/// <seealso cref="System.Reactive.Disposables.ICancelable" />
+/// <seealso cref="IObservable&lt;T&gt;" />
+/// <seealso cref="ICancelable" />
 public interface IRxProperty<T> : IObservable<T?>, ICancelable
 {
     /// <summary>
