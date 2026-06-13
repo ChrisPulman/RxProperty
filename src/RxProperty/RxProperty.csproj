@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <Compile Update="**\*.cs" DependentUpon="I%(Filename).cs" />
-    <PackageReference Include="ReactiveUI" Version="19.*" />
+    <PackageReference Include="ReactiveUI" Version="23.*" />
   </ItemGroup>
 
 </Project>
